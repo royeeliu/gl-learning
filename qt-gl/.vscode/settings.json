@@ -1,0 +1,8 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/src",
+    "cmake.buildDirectory": "${workspaceRoot}/build",
+    "files.associations": {
+        "qapplication": "cpp",
+        "qmainwindow": "cpp"
+    },
+}
