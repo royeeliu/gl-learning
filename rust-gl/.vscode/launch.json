@@ -62,7 +62,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in example 'hello'",
+            "name": "Debug unit tests in example 'hello-triangle'",
             "cargo": {
                 "args": [
                     "test",
@@ -72,6 +72,43 @@
                 ],
                 "filter": {
                     "name": "hello-triangle",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'triangle-01'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=triangle-01",
+                    "--package=rust-gl"
+                ],
+                "filter": {
+                    "name": "triangle-01",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'triangle-01'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=triangle-01",
+                    "--package=rust-gl"
+                ],
+                "filter": {
+                    "name": "triangle-01",
                     "kind": "example"
                 }
             },

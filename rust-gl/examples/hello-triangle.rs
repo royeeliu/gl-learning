@@ -1,7 +1,7 @@
-use glium::Surface;
-
 #[macro_use]
 extern crate glium;
+
+use glium::{glutin, Surface};
 
 #[derive(Copy, Clone)]
 struct Vertex {
@@ -10,8 +10,6 @@ struct Vertex {
 implement_vertex!(Vertex, position);
 
 fn main() {
-    use glium::glutin;
-
     let vertices = vec![
         Vertex {
             position: [-0.5, -0.5],
@@ -54,6 +52,20 @@ fn main() {
             .unwrap();
 
     event_loop.run(move |event, _, control_flow| {
+        let next_frame_time =
+            std::time::Instant::now() + std::time::Duration::from_nanos(16_666_667);
+        *control_flow = glutin::event_loop::ControlFlow::WaitUntil(next_frame_time);
+
+        match event {
+            glutin::event::Event::WindowEvent { event, .. } => match event {
+                glutin::event::WindowEvent::CloseRequested => {
+                    *control_flow = glutin::event_loop::ControlFlow::Exit;
+                }
+                _ => {}
+            },
+            _ => (),
+        }
+
         let mut target = display.draw();
         target.clear_color(0.0, 0.1, 0.1, 1.0);
         target
@@ -66,18 +78,5 @@ fn main() {
             )
             .unwrap();
         target.finish().unwrap();
-
-        let next_frame_time =
-            std::time::Instant::now() + std::time::Duration::from_nanos(16_666_667);
-        *control_flow = glutin::event_loop::ControlFlow::WaitUntil(next_frame_time);
-        match event {
-            glutin::event::Event::WindowEvent { event, .. } => match event {
-                glutin::event::WindowEvent::CloseRequested => {
-                    *control_flow = glutin::event_loop::ControlFlow::Exit;
-                }
-                _ => {}
-            },
-            _ => (),
-        }
     });
 }
