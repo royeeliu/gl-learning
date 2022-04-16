@@ -44,15 +44,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'hello'",
+            "name": "Debug example 'hello-triangle'",
             "cargo": {
                 "args": [
                     "build",
-                    "--example=hello",
+                    "--example=hello-triangle",
                     "--package=rust-gl"
                 ],
                 "filter": {
-                    "name": "hello",
+                    "name": "hello-triangle",
                     "kind": "example"
                 }
             },
@@ -67,11 +67,11 @@
                 "args": [
                     "test",
                     "--no-run",
-                    "--example=hello",
+                    "--example=hello-triangle",
                     "--package=rust-gl"
                 ],
                 "filter": {
-                    "name": "hello",
+                    "name": "hello-triangle",
                     "kind": "example"
                 }
             },

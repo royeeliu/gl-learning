@@ -15,7 +15,7 @@ fn main() {
     
     event_loop.run(move |event, _, control_flow|{
         let mut target = display.draw();
-        target.clear_color(0.0, 0.0, 1.0, 1.0);
+        target.clear_color(0.0, 0.1, 0.1, 1.0);
         target.finish().unwrap();
 
         let next_frame_time = std::time::Instant::now() + std::time::Duration::from_nanos(16_666_667);
