@@ -17,7 +17,8 @@
             "externalConsole": false,
             "osx": {
                 "MIMode": "lldb"
-            }
+            },
+            "visualizerFile": "/Users/royeeliu/Library/Application Support/Code/User/workspaceStorage/4b8c44fdcee39fe09d1f417a68c78e39/tonka3000.qtvsctools/qt.natvis.xml"
         }
     ]
 }

@@ -3,6 +3,7 @@
     "cmake.buildDirectory": "${workspaceRoot}/build",
     "files.associations": {
         "qapplication": "cpp",
-        "qmainwindow": "cpp"
+        "qmainwindow": "cpp",
+        "qopenglfunctions": "cpp"
     },
 }

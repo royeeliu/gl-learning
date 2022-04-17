@@ -11,14 +11,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
+
+include_directories("${PROJECT_SOURCE_DIR}/widgets")
+aux_source_directory(./widgets WIDGETS_SRCS)
 
 set(PROJECT_SOURCES
         main.cpp
         main_window.cc
         main_window.h
         main_window.ui
+        ${WIDGETS_SRCS}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -44,7 +48,10 @@ else()
     endif()
 endif()
 
-target_link_libraries(LearningOpenGL PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(LearningOpenGL PRIVATE 
+    Qt${QT_VERSION_MAJOR}::Widgets 
+    Qt${QT_VERSION_MAJOR}::OpenGLWidgets
+)
 
 set_target_properties(LearningOpenGL PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
