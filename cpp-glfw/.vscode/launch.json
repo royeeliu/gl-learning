@@ -5,12 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Triangle Debug",
             "type": "lldb",
             "request": "launch",
-            "name": "Debug",
-            "program": "${workspaceFolder}/build/triangle",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/triangle",
+            "preLaunchTask": "build",
+            "environment": [],
+            "externalConsole": false,
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/build/triangle",
+            },
         }
     ]
 }
