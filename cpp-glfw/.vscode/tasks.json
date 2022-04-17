@@ -21,6 +21,7 @@
             "type": "shell",
             "command": "cmake",
             "args": [
+                "-DCMAKE_BUILD_TYPE=Debug",
                 //"-DCMAKE_BUILD_TYPE=${input:CMAKE_BUILD_TYPE}", // 选择编译配置
                 //"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", // 生成compile_commands.json 供c/c++扩展提示使用
                 "../src/",
