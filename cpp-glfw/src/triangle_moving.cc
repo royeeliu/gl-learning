@@ -1,4 +1,5 @@
 #include "utils/glfw_module.h"
+#include "utils/shader.h"
 
 #include <iostream>
 
@@ -35,11 +36,7 @@ int main()
         return -1;
     }
 
-    GLuint shader_program = utils::CreateAndLinkShaders(VERTEXT_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
-    if (shader_program == 0)
-    {
-        return -1;
-    }
+    utils::Shader shader{VERTEXT_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE};
 
     GLuint vbo = 0;
     GLuint vao = 0;
@@ -66,16 +63,15 @@ int main()
     GLfloat step = 0.005f;
 
     module.SetBackgroundColor(0.2f, 0.3f, 0.3f);
-    module.RunMessageLoop([shader_program, vao, &offset, &step] {
+    module.RunMessageLoop([&shader, vao, &offset, &step] {
         offset += step;
         if (offset > 0.5f || offset < -0.5f)
         {
             step = -step;
         }
-        int offset_location = glGetUniformLocation(shader_program, "offset");
 
-        glUseProgram(shader_program);
-        glUniform1f(offset_location, offset);
+        shader.Use();
+        shader.SetFloat("offset", offset);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         // glBindVertexArray(0); // no need to unbind it every time
@@ -83,7 +79,6 @@ int main()
 
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
-    glDeleteProgram(shader_program);
 
     return 0;
 }
