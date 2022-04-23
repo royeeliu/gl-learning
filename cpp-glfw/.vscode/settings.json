@@ -67,6 +67,10 @@
         "functional": "cpp",
         "iterator": "cpp",
         "utility": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "filesystem": "cpp",
+        "deque": "cpp",
+        "iomanip": "cpp",
+        "stack": "cpp"
     },
 }
