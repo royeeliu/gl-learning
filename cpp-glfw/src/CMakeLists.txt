@@ -15,6 +15,8 @@ add_subdirectory(utils)
 
 add_executable(triangle triangle.cc)
 add_executable(triangle-moving triangle_moving.cc)
+add_executable(triangle-color triangle_color.cc)
 
 target_link_libraries(triangle glfw3 glad utils)
 target_link_libraries(triangle-moving glfw3 glad utils)
+target_link_libraries(triangle-color glfw3 glad utils)

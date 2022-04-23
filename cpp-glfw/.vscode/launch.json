@@ -33,6 +33,21 @@
                 "MIMode": "lldb",
                 "program": "${workspaceFolder}/build/triangle-moving",
             },
+        },
+        {
+            "name": "Triangle-Color Debug",
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/triangle-color",
+            "preLaunchTask": "build",
+            "environment": [],
+            "externalConsole": false,
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/build/triangle-color",
+            },
         }
     ]
 }
