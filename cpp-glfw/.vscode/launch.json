@@ -18,6 +18,21 @@
                 "MIMode": "lldb",
                 "program": "${workspaceFolder}/build/triangle",
             },
+        },
+        {
+            "name": "Triangle-Moving Debug",
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/triangle-moving",
+            "preLaunchTask": "build",
+            "environment": [],
+            "externalConsole": false,
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/build/triangle-moving",
+            },
         }
     ]
 }

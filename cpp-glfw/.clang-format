@@ -71,3 +71,6 @@ BreakInheritanceList: BeforeComma
 
 # 总是在template声明后换行
 AlwaysBreakTemplateDeclarations:	true
+
+#
+AlignAfterOpenBracket: AlwaysBreak

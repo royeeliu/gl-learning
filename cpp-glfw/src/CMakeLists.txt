@@ -9,9 +9,12 @@ include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
 link_libraries("-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo")
 
-# 添加 math 子目录
+# 添加子目录
 add_subdirectory(glad)
+add_subdirectory(utils)
 
 add_executable(triangle triangle.cc)
+add_executable(triangle-moving triangle_moving.cc)
 
-target_link_libraries(triangle glfw3 glad)
+target_link_libraries(triangle glfw3 glad utils)
+target_link_libraries(triangle-moving glfw3 glad utils)

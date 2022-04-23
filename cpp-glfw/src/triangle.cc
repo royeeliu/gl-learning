@@ -158,6 +158,7 @@ int main()
         glUseProgram(shader_program);
         glBindVertexArray(vao); // seeing as we only have a single VAO there's no need to bind it every time, but we'll
                                 // do so to keep things a bit more organized
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // 线框模式
         glDrawArrays(GL_TRIANGLES, 0, 3);
         // glBindVertexArray(0); // no need to unbind it every time
 
