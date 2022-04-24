@@ -50,18 +50,18 @@
             },
         },
         {
-            "name": "Rectangle-Texture Debug",
+            "name": "Texture Debug",
             "type": "lldb",
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/build/rectangle-texture",
+            "program": "${workspaceFolder}/build/texture",
             "preLaunchTask": "build",
             "environment": [],
             "externalConsole": false,
             "osx": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/build/rectangle-texture",
+                "program": "${workspaceFolder}/build/texture",
             },
         }
     ]

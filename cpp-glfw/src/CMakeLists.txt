@@ -17,12 +17,12 @@ add_subdirectory(stb_image)
 add_executable(triangle triangle.cc)
 add_executable(triangle-moving triangle_moving.cc)
 add_executable(triangle-color triangle_color.cc)
-add_executable(rectangle-texture rectangle_texture.cc)
+add_executable(texture texture.cc)
 
 target_link_libraries(triangle glfw3 glad utils)
 target_link_libraries(triangle-moving glfw3 glad utils)
 target_link_libraries(triangle-color glfw3 glad utils)
-target_link_libraries(rectangle-texture glfw3 glad utils stb_image)
+target_link_libraries(texture glfw3 glad utils stb_image)
 
 # 拷贝 assets 文件夹
 add_custom_target(copy_assets ALL  
