@@ -63,6 +63,36 @@
                 "MIMode": "lldb",
                 "program": "${workspaceFolder}/build/texture",
             },
+        },
+        {
+            "name": "Texture-Combined Debug",
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/texture-combined",
+            "preLaunchTask": "build",
+            "environment": [],
+            "externalConsole": false,
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/build/texture-combined",
+            },
+        },
+        {
+            "name": "Texture-Face Debug",
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/texture-face",
+            "preLaunchTask": "build",
+            "environment": [],
+            "externalConsole": false,
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/build/texture-face",
+            },
         }
     ]
 }
