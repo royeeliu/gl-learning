@@ -1,0 +1,3 @@
+[submodule "cpp-glfw/third-party/glm"]
+	path = cpp-glfw/third-party/glm
+	url = https://github.com/g-truc/glm.git

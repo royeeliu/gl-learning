@@ -17,6 +17,7 @@ public:
     void SetBool(const char* name, GLboolean value);
     void SetInt(const char* name, GLint value);
     void SetFloat(const char* name, GLfloat value);
+    GLuint GetUniformLocation(const char* name);
 
 private:
     void CheckCompileErrors(GLuint shader);

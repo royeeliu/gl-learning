@@ -66,6 +66,11 @@ void Shader::SetFloat(const char* name, GLfloat value)
     glUniform1f(glGetUniformLocation(program_, name), value);
 }
 
+GLuint Shader::GetUniformLocation(const char* name)
+{
+    return glGetUniformLocation(program_, name);
+}
+
 void Shader::CheckCompileErrors(GLuint shader)
 {
     GLint success = 0;

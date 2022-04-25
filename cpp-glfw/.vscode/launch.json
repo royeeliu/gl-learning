@@ -35,6 +35,21 @@
             },
         },
         {
+            "name": "Triangle-Matrix Debug",
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/triangle-matrix",
+            "preLaunchTask": "build",
+            "environment": [],
+            "externalConsole": false,
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/build/triangle-matrix",
+            },
+        },
+        {
             "name": "Triangle-Color Debug",
             "type": "lldb",
             "request": "launch",
