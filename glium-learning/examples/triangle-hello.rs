@@ -23,7 +23,7 @@ fn main() {
     ];
 
     let vertex_shader_src = r#"
-        #version 140
+        #version 330 core
         in vec2 position;
 
         void main() {
@@ -32,7 +32,7 @@ fn main() {
     "#;
 
     let fragment_shader_src = r#"
-        #version 140
+        #version 330 core
         out vec4 color;
 
         void main() {
