@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Triangle Debug",
+            "name": "Triangle-Hello Debug",
             "type": "lldb",
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/build/triangle",
+            "program": "${workspaceFolder}/build/triangle-hello",
             "preLaunchTask": "build",
             "environment": [],
             "externalConsole": false,
             "osx": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/build/triangle",
+                "program": "${workspaceFolder}/build/triangle-hello",
             },
         },
         {
@@ -50,18 +50,18 @@
             },
         },
         {
-            "name": "Texture Debug",
+            "name": "Texture-Hello Debug",
             "type": "lldb",
             "request": "launch",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/build/texture",
+            "program": "${workspaceFolder}/build/texture-hello",
             "preLaunchTask": "build",
             "environment": [],
             "externalConsole": false,
             "osx": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/build/texture",
+                "program": "${workspaceFolder}/build/texture-hello",
             },
         },
         {
