@@ -164,10 +164,12 @@
     <ClCompile Include="main_frame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="display_view.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="main_frame.h" />
+    <ClInclude Include="stdx\strings.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tree_vew_utils.h" />
   </ItemGroup>

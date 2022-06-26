@@ -12,6 +12,9 @@
     <Filter Include="views">
       <UniqueIdentifier>{833d6fd5-37fb-4210-bde4-a1d1dd6b8346}</UniqueIdentifier>
     </Filter>
+    <Filter Include="stdx">
+      <UniqueIdentifier>{a8232b65-b093-4d9c-b98d-02f62f230e11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,6 +45,12 @@
     </ClInclude>
     <ClInclude Include="tree_vew_utils.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdx\strings.h">
+      <Filter>stdx</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

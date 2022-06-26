@@ -32,12 +32,14 @@ int main()
 
     MainFrame main_frame;
 
-    if (main_frame.CreateEx() == nullptr)
+    RECT rect{0, 0, 1280, 720};
+    if (main_frame.CreateEx(/*hWndParent*/nullptr, &rect) == nullptr)
     {
         ATLTRACE(_T("Frame window creation failed!\n"));
         return 0;
     }
 
+    main_frame.CenterWindow();
     main_frame.ShowWindow(SW_SHOW);
     ::SetForegroundWindow(main_frame); // Win95 needs this
 

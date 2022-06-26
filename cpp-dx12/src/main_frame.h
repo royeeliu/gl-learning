@@ -26,7 +26,6 @@ public:
         MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 
         NOTIFY_CODE_HANDLER(TVN_SELCHANGED, OnTVSelChanged)
-        NOTIFY_CODE_HANDLER(TVN_ITEMEXPANDING, OnTVItemExpanding)
 
         CHAIN_MSG_MAP(CUpdateUI<MainFrame>)
         CHAIN_MSG_MAP(CFrameWindowImpl<MainFrame>)
@@ -46,7 +45,6 @@ private:
     LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
     LRESULT OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
     LRESULT OnTVSelChanged(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/);
-    LRESULT OnTVItemExpanding(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/);
 
 private:
     struct TVItem
@@ -57,6 +55,7 @@ private:
 
     void InitViews();
     void FillTreeView(const std::vector<TVItem>& items, HTREEITEM parent);
+    void UpdateTitle(const wchar_t* suffix);
 
     static std::vector<TVItem> CreateItemTree();
 

@@ -1,5 +1,7 @@
 #include "main_frame.h"
+#include "config.h"
 #include "global.h"
+#include "stdx/strings.h"
 #include "tree_vew_utils.h"
 
 BOOL MainFrame::PreTranslateMessage(MSG* msg)
@@ -57,6 +59,16 @@ void MainFrame::FillTreeView(const std::vector<TVItem>& items, HTREEITEM parent)
     }
 }
 
+void MainFrame::UpdateTitle(const wchar_t* suffix)
+{
+    std::wstring title = stdx::u8_to_wide(config::AppName);
+    if (suffix && suffix[0] != L'\0')
+    {
+        title.append(L" - ").append(suffix);
+    }
+    SetWindowTextW(title.c_str());
+}
+
 std::vector<MainFrame::TVItem> MainFrame::CreateItemTree() {
     TVItem item1{L"item 1"};
     item1.children.emplace_back(L"leaf 1_1");
@@ -78,6 +90,7 @@ std::vector<MainFrame::TVItem> MainFrame::CreateItemTree() {
 
 LRESULT MainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 {
+    UpdateTitle(/*suffix*/ nullptr);
     CreateSimpleStatusBar();
 
     m_hWndClient = splitter_view_.Create(
@@ -123,10 +136,13 @@ LRESULT MainFrame::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 
 LRESULT MainFrame::OnTVSelChanged(int, LPNMHDR pnmh, BOOL&)
 {
+    LPNMTREEVIEW lptv = (LPNMTREEVIEW)pnmh;
+    CTreeViewCtrlEx tree_view(lptv->hdr.hwndFrom);
+
+    CString text;
+    tree_view.GetItemText(lptv->itemNew.hItem, text);
+    UpdateTitle(text);
+
     return 0L;
 }
 
-LRESULT MainFrame::OnTVItemExpanding(int, LPNMHDR pnmh, BOOL&)
-{
-    return 0L;
-}
