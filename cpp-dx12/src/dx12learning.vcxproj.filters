@@ -40,5 +40,8 @@
     <ClInclude Include="display_view.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="tree_vew_utils.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #include "main_frame.h"
 #include "global.h"
+#include "tree_vew_utils.h"
 
 BOOL MainFrame::PreTranslateMessage(MSG* msg)
 {
@@ -16,8 +17,9 @@ BOOL MainFrame::OnIdle()
         CWaitCursor wait;
 
         FillTreeView(CreateItemTree(), TVI_ROOT);
-        tree_view_.Expand(tree_view_.GetRootItem());
-        tree_view_.SelectItem(tree_view_.GetRootItem());
+        tree_view_utils::ExpantAll(tree_view_);
+        tree_view_.SelectItem(tree_view_utils::FindFirstLeaf(tree_view_.GetRootItem()));
+        tree_view_.SetFocus();
     }
     return FALSE;
 }
@@ -63,7 +65,8 @@ std::vector<MainFrame::TVItem> MainFrame::CreateItemTree() {
     TVItem item2{L"item 2"};
     TVItem item3{L"item 3"};
     item3.children.emplace_back(L"leaf 3_1");
-    item3.children.emplace_back(L"leaf 3_2");
+    item3.children.emplace_back(L"item 3_2");
+    item3.children.back().children.emplace_back(L"leaf 3_2_1");
 
     std::vector<TVItem> item_tree;
     item_tree.emplace_back(std::move(item1));
