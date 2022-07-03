@@ -1,6 +1,6 @@
 #include "hello_window.h"
 #include "dx12/d3dx12.hpp"
-#include "dx12/dx12_factories.h"
+#include "dx12/dx12_factories.hpp"
 
 #include <stdexcept>
 

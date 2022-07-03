@@ -61,10 +61,10 @@
     <ClInclude Include="config.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="stdx\strings.h">
+    <ClInclude Include="stdx\strings.hpp">
       <Filter>stdx</Filter>
     </ClInclude>
-    <ClInclude Include="dx12\dx12_framework.h">
+    <ClInclude Include="dx12\dx12_framework.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
     <ClInclude Include="dx12\d3dx12.hpp">
@@ -85,34 +85,34 @@
     <ClInclude Include="dx12\dxgi_factory_creator.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
-    <ClInclude Include="dx12\dx12_result.hpp">
+    <ClInclude Include="dx12\dx_result.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
     <ClInclude Include="dx12\dx_error.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
-    <ClInclude Include="dx12\d3d12_device_factory.hpp">
+    <ClInclude Include="dx12\device_factory.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
     <ClInclude Include="base\exception.hpp">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="base\macros.h">
+    <ClInclude Include="base\macros.hpp">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="dx12\d3d12_command_queue_factory.hpp">
+    <ClInclude Include="dx12\command_queue_factory.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
     <ClInclude Include="dx12\dxgi_swap_chain_factory.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
-    <ClInclude Include="dx12\d3d12_descriptor_heap_factory.hpp">
+    <ClInclude Include="dx12\descriptor_heap_factory.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
-    <ClInclude Include="dx12\dx12_factories.h">
+    <ClInclude Include="dx12\dx12_factories.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
-    <ClInclude Include="base\unique_deleters.h">
+    <ClInclude Include="base\unique_deleters.hpp">
       <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>

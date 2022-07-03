@@ -1,7 +1,7 @@
 #pragma once
 
-#include "base/unique_deleters.h"
-#include "dx12/dx12_framework.h"
+#include "base/unique_deleters.hpp"
+#include "dx12/dx12_framework.hpp"
 #include "dx12/dx_error.hpp"
 
 #include <array>

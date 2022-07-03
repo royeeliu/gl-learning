@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdx/strings.h"
+#include "stdx/strings.hpp"
 
 #include <format>
 #include <iostream>

@@ -1,5 +1,5 @@
 #include "global.h"
-#include "stdx/strings.h"
+#include "stdx/strings.hpp"
 
 #include <iostream>
 

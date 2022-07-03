@@ -1,8 +1,7 @@
 #pragma once
 
-#include "base/macros.h"
-#include "dx12_framework.h"
-#include "dx12_result.hpp"
+#include "base/macros.hpp"
+#include "dx12_framework.hpp"
 
 namespace dx12 {
 

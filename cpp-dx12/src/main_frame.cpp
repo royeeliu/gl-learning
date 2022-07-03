@@ -1,7 +1,7 @@
 #include "main_frame.h"
 #include "config.h"
 #include "global.h"
-#include "stdx/strings.h"
+#include "stdx/strings.hpp"
 #include "tree_vew_utils.h"
 
 BOOL MainFrame::PreTranslateMessage(MSG* msg)

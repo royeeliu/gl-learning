@@ -2,9 +2,9 @@
 
 #include "error.hpp"
 #include "exception.hpp"
-#include "stdx/strings.h"
+#include "stdx/strings.hpp"
+
 #include <format>
-#include <winnt.h>
 
 namespace base {
 
