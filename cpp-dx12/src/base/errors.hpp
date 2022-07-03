@@ -4,7 +4,6 @@
 
 #include <format>
 #include <iostream>
-#include <optional>
 #include <system_error>
 #include <vector>
 
@@ -23,7 +22,19 @@ struct SourceLocation
     char8_t const* function = nullptr;
 };
 
-class Exception;
+
+template <class T>
+ErrorInfo MakeErrorInfo(char8_t const* name, T content) noexcept
+{
+    try
+    {
+        return {std::u8string{name ? name : u8"", stdx::locale_to_u8(std::to_string(content))}};
+    }
+    catch (std::exception&)
+    {
+        return ErrorInfo{};
+    }
+}
 
 class Error
 {
@@ -123,30 +134,26 @@ private:
     std::vector<SourceLocation> source_locations_;
 };
 
-template <class T>
-ErrorInfo MakeErrorInfo(char8_t const* name, T content) noexcept
+class Exception : virtual public std::exception
 {
-    try
+public:
+    virtual std::error_code const& Code() const noexcept = 0;
+    virtual std::u8string const& Message() const noexcept = 0;
+
+    virtual void PushSourceLocation(SourceLocation const& location) noexcept = 0;
+    virtual void PushInfo(ErrorInfo info) noexcept = 0;
+
+    virtual std::u8string GetDiagnosticInfo(
+        char8_t const* prefix = u8"\t < ", char8_t const* suffix = u8"\n") const = 0;
+
+protected:
+    Exception(char const* name = nullptr) noexcept
+        : std::exception(name ? name : "Base Exception")
     {
-        return {std::u8string{name ? name : u8"", stdx::locale_to_u8(std::to_string(content))}};
     }
-    catch (std::exception&)
-    {
-        return ErrorInfo{};
-    }
-}
-
-
-namespace internal {
-
-template <class E>
-struct enable_if_derived_from_error
-{
-    using type = std::enable_if_t<std::is_base_of<Error, E>::value, void>;
 };
 
-template <class E>
-using enable_if_derived_from_error_t = typename enable_if_derived_from_error<E>::type;
+namespace internal {
 
 template <class E>
 struct enable_if_derived_from_error_or_exception
@@ -161,16 +168,14 @@ struct enable_if_derived_from_error_or_exception
 template <class E>
 using enable_if_derived_from_error_or_exception_t = typename enable_if_derived_from_error_or_exception<E>::type;
 
-template <class E>
-inline void PushInfo(E& error, base::ErrorInfo const& info, enable_if_derived_from_error_t<E>* = nullptr) noexcept
+inline void PushInfo(Error& error, base::ErrorInfo const& info) noexcept
 {
     error.PushInfo(info);
 }
 
-template <class E>
-inline void PushSourceLocation(E& error, SourceLocation const& location, enable_if_derived_from_error_t<E>* = nullptr)
+inline void PushInfo(Exception& ex, base::ErrorInfo const& info) noexcept
 {
-    error.PushSourceLocation(location);
+    ex.PushInfo(info);
 }
 
 inline void PushInfo(std::ostream& os, base::ErrorInfo const& info) noexcept
@@ -178,12 +183,21 @@ inline void PushInfo(std::ostream& os, base::ErrorInfo const& info) noexcept
     os << "{" << stdx::u8_to_locale(info.name) << ": " << stdx::u8_to_locale(info.content) << "}";
 }
 
+inline void PushSourceLocation(Error& error, SourceLocation const& location)
+{
+    error.PushSourceLocation(location);
+}
+
+inline void PushSourceLocation(Exception& ex, SourceLocation const& location)
+{
+    ex.PushSourceLocation(location);
+}
+
 inline void PushSourceLocation(std::ostream& os, SourceLocation const& location)
 {
     os << "{" << stdx::u8_to_locale(location.file) << "(" << location.line
        << "): " << stdx::u8_to_locale(location.function) << "}";
 }
-
 
 } // namespace internal
 

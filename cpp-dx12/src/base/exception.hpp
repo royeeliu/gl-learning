@@ -1,28 +1,9 @@
 #pragma once
 
-#include "error.hpp"
-#include <exception>
+#include "errors.hpp"
 #include <string>
 
 namespace base {
-
-class Exception : virtual public std::exception
-{
-public:
-    virtual std::error_code const& Code() const noexcept = 0;
-    virtual std::u8string const& Message() const noexcept = 0;
-
-    virtual void PushSourceLocation(SourceLocation const& location) noexcept = 0;
-    virtual void PushInfo(ErrorInfo info) noexcept = 0;
-
-    virtual std::u8string GetDiagnosticInfo(char8_t const* prefix = u8"\t < ", char8_t const* suffix = u8"\n") const = 0;
-
-protected:
-    Exception(char const* name = nullptr) noexcept
-        : std::exception(name ? name : "Base Exception")
-    {
-    }
-};
 
 template <
     class T, class TError = base::Error, class TBase = Exception,
@@ -98,31 +79,5 @@ __declspec(noreturn) inline void ThrowException(Error error)
 {
     throw _NormalExceptionImpl{std::move(error)};
 }
-
-namespace internal {
-
-template <class E>
-struct enable_if_derived_from_exception
-{
-    using type = std::enable_if_t<std::is_base_of<Exception, E>::value, void>;
-};
-
-template <class E>
-using enable_if_derived_from_exception_t = typename enable_if_derived_from_exception<E>::type;
-
-template <class E>
-inline E& PushInfo(E& ex, base::ErrorInfo const& info, enable_if_derived_from_exception_t<E>* = nullptr) noexcept
-{
-    ex.PushInfo(info);
-    return ex;
-}
-
-template <class E>
-inline void PushSourceLocation(E& ex, SourceLocation const& location, enable_if_derived_from_exception_t<E>* = nullptr)
-{
-    ex.PushSourceLocation(location);
-}
-
-} // namespace internal
 
 } // namespace base

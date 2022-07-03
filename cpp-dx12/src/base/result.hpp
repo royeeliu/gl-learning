@@ -1,6 +1,6 @@
 #pragma once
 
-#include "error.hpp"
+#include "errors.hpp"
 #include <variant>
 
 namespace base {

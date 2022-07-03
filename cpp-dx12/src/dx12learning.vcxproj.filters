@@ -76,7 +76,7 @@
     <ClInclude Include="base\com_error.hpp">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="base\error.hpp">
+    <ClInclude Include="base\errors.hpp">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="base\result.hpp">

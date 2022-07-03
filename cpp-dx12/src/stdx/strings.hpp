@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers.
+#endif
+#include <windows.h>
+
 #if !defined(_INC_WINDOWS)
 #error Need include windows.h first.
 #endif

@@ -172,7 +172,7 @@
   <ItemGroup>
     <ClInclude Include="base\exception.hpp" />
     <ClInclude Include="base\com_error.hpp" />
-    <ClInclude Include="base\error.hpp" />
+    <ClInclude Include="base\errors.hpp" />
     <ClInclude Include="base\macros.hpp" />
     <ClInclude Include="base\result.hpp" />
     <ClInclude Include="base\unique_deleters.hpp" />
