@@ -1,6 +1,9 @@
 #pragma once
 
 #include "framework.h"
+#include "samples/hello_window.h"
+
+#include <memory>
 
 class DisplayView final : public ATL::CWindowImpl<DisplayView>
 {
@@ -24,4 +27,7 @@ private:
     LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnEraseBkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+private:
+    std::unique_ptr<samples::HelloWindow> sample_;
 };

@@ -95,11 +95,12 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../thirdparty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../thirdparty;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -113,13 +114,14 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../thirdparty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../thirdparty;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -131,11 +133,12 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../thirdparty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../thirdparty;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,26 +152,46 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../thirdparty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../thirdparty;./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="display_view.cpp" />
+    <ClCompile Include="global.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_frame.cpp" />
+    <ClCompile Include="samples\hello_window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base\exception.hpp" />
+    <ClInclude Include="base\com_error.hpp" />
+    <ClInclude Include="base\error.hpp" />
+    <ClInclude Include="base\macros.h" />
+    <ClInclude Include="base\result.hpp" />
+    <ClInclude Include="base\unique_deleters.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="display_view.h" />
+    <ClInclude Include="dx12\d3d12_command_queue_factory.hpp" />
+    <ClInclude Include="dx12\d3d12_descriptor_heap_factory.hpp" />
+    <ClInclude Include="dx12\d3dx12.hpp" />
+    <ClInclude Include="dx12\d3d12_device_factory.hpp" />
+    <ClInclude Include="dx12\dx12_factories.h" />
+    <ClInclude Include="dx12\dx12_result.hpp" />
+    <ClInclude Include="dx12\dxgi_factory_creator.hpp" />
+    <ClInclude Include="dx12\dxgi_swap_chain_factory.hpp" />
+    <ClInclude Include="dx12\dx_error.hpp" />
+    <ClInclude Include="dx12\dx12_framework.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="main_frame.h" />
+    <ClInclude Include="samples\hello_window.h" />
     <ClInclude Include="stdx\strings.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tree_vew_utils.h" />

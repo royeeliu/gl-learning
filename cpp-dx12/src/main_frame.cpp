@@ -11,23 +11,73 @@ BOOL MainFrame::PreTranslateMessage(MSG* msg)
 
 BOOL MainFrame::OnIdle()
 {
-    if (first_idle_)
-    {
-        first_idle_ = false;
-
-        // Hourglass on
-        CWaitCursor wait;
-
-        FillTreeView(CreateItemTree(), TVI_ROOT);
-        tree_view_utils::ExpantAll(tree_view_);
-        tree_view_.SelectItem(tree_view_utils::FindFirstLeaf(tree_view_.GetRootItem()));
-        tree_view_.SetFocus();
-    }
+    // 使用 DX12 渲染后一直在不断收到 WM_PAINT 消息，无法触发 OnIdle 
     return FALSE;
+}
+
+LRESULT MainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
+{
+    UpdateTitle(/*suffix*/ nullptr);
+    CreateSimpleStatusBar();
+
+    m_hWndClient =
+        splitter_view_.Create(m_hWnd, rcDefault, nullptr, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+
+    tree_view_.Create(
+        splitter_view_, rcDefault, nullptr,
+        WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS |
+            TVS_SHOWSELALWAYS,
+        WS_EX_CLIENTEDGE);
+
+    display_view_.Create(
+        splitter_view_, rcDefault, nullptr, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0);
+
+    InitViews();
+    UpdateLayout();
+
+    splitter_view_.SetSplitterPanes(tree_view_, display_view_);
+
+    RECT rect{};
+    GetClientRect(&rect);
+    splitter_view_.SetSplitterPos((rect.right - rect.left) / 5);
+
+    CMessageLoop* loop = global::app_module.GetMessageLoop();
+    loop->AddMessageFilter(this);
+    loop->AddIdleHandler(this);
+
+    return 0L;
+}
+
+LRESULT MainFrame::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+    CMessageLoop* loop = global::app_module.GetMessageLoop();
+    if (loop)
+    {
+        loop->RemoveMessageFilter(this);
+        loop->RemoveIdleHandler(this);
+    }
+    ::PostQuitMessage(0);
+    return 0L;
+}
+
+LRESULT MainFrame::OnTVSelChanged(int, LPNMHDR pnmh, BOOL&)
+{
+    LPNMTREEVIEW lptv = (LPNMTREEVIEW)pnmh;
+    CTreeViewCtrlEx tree_view(lptv->hdr.hwndFrom);
+
+    CString text;
+    tree_view.GetItemText(lptv->itemNew.hItem, text);
+    UpdateTitle(text);
+
+    return 0L;
 }
 
 void MainFrame::InitViews()
 {
+    FillTreeView(CreateItemTree(), TVI_ROOT);
+    tree_view_utils::ExpantAll(tree_view_);
+    tree_view_.SelectItem(tree_view_utils::FindFirstLeaf(tree_view_.GetRootItem()));
+    tree_view_.SetFocus();
 }
 
 void MainFrame::FillTreeView(const std::vector<TVItem>& items, HTREEITEM parent)
@@ -86,63 +136,5 @@ std::vector<MainFrame::TVItem> MainFrame::CreateItemTree() {
     item_tree.emplace_back(std::move(item3));
 
     return item_tree;
-}
-
-LRESULT MainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
-{
-    UpdateTitle(/*suffix*/ nullptr);
-    CreateSimpleStatusBar();
-
-    m_hWndClient = splitter_view_.Create(
-        m_hWnd, rcDefault, nullptr, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-
-    tree_view_.Create(
-        splitter_view_, rcDefault, nullptr,
-        WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS |
-            TVS_SHOWSELALWAYS,
-        WS_EX_CLIENTEDGE);
-
-    display_view_.Create(
-        splitter_view_, rcDefault, nullptr, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        0);
-
-    InitViews();
-    UpdateLayout();
-
-    splitter_view_.SetSplitterPanes(tree_view_, display_view_);
-
-    RECT rect{};
-    GetClientRect(&rect);
-    splitter_view_.SetSplitterPos((rect.right - rect.left) / 4);
-
-    CMessageLoop* loop = global::app_module.GetMessageLoop();
-    loop->AddMessageFilter(this);
-    loop->AddIdleHandler(this);
-
-    return 0L;
-}
-
-LRESULT MainFrame::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-{
-    CMessageLoop* loop = global::app_module.GetMessageLoop();
-    if (loop)
-    {
-        loop->RemoveMessageFilter(this);
-        loop->RemoveIdleHandler(this);
-    }
-    ::PostQuitMessage(0);
-    return 0L;
-}
-
-LRESULT MainFrame::OnTVSelChanged(int, LPNMHDR pnmh, BOOL&)
-{
-    LPNMTREEVIEW lptv = (LPNMTREEVIEW)pnmh;
-    CTreeViewCtrlEx tree_view(lptv->hdr.hwndFrom);
-
-    CString text;
-    tree_view.GetItemText(lptv->itemNew.hItem, text);
-    UpdateTitle(text);
-
-    return 0L;
 }
 

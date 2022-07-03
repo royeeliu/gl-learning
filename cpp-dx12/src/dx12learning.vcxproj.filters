@@ -9,11 +9,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="views">
-      <UniqueIdentifier>{833d6fd5-37fb-4210-bde4-a1d1dd6b8346}</UniqueIdentifier>
-    </Filter>
     <Filter Include="stdx">
       <UniqueIdentifier>{a8232b65-b093-4d9c-b98d-02f62f230e11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dx12">
+      <UniqueIdentifier>{425f5eca-116a-4b96-8cb4-f2d3eaca6319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="samples">
+      <UniqueIdentifier>{a6b3e9ec-9b4e-4809-a911-71d9b9524994}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{7891f7d3-d771-4c67-89fd-e82aab9d5eb8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +30,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="display_view.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="samples\hello_window.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
+    <ClCompile Include="global.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,6 +63,57 @@
     </ClInclude>
     <ClInclude Include="stdx\strings.h">
       <Filter>stdx</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\dx12_framework.h">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\d3dx12.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="samples\hello_window.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="base\com_error.hpp">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\error.hpp">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\result.hpp">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\dxgi_factory_creator.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\dx12_result.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\dx_error.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\d3d12_device_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="base\exception.hpp">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\macros.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\d3d12_command_queue_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\dxgi_swap_chain_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\d3d12_descriptor_heap_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\dx12_factories.h">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="base\unique_deleters.h">
+      <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

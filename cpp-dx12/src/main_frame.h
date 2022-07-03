@@ -63,8 +63,6 @@ private:
     CSplitterWindow splitter_view_;
     CTreeViewCtrlEx tree_view_;
     DisplayView display_view_;
-
-    bool first_idle_ = true;
 };
 
 #pragma warning(pop)
