@@ -1,11 +1,11 @@
 #include "display_view.h"
 #include "global.h"
-
-#include <stdexcept>
+#include "samples/hello_triangle.h"
+#include "samples/hello_window.h"
 
 LRESULT DisplayView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-    sample_ = std::make_unique<samples::HelloWindow>(m_hWnd, [](auto const& error) { global::ShowErrorInfo(error); });
+    //sample_ = std::make_unique<samples::HelloTriangle>(m_hWnd, [](auto const& error) { global::ShowErrorInfo(error); });
     return 0L;
 }
 
@@ -35,5 +35,12 @@ LRESULT DisplayView::OnEraseBkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
 
 LRESULT DisplayView::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
+    uint32_t width = LOWORD(lParam);  // width of client area
+    uint32_t height = HIWORD(lParam); // height of client area
+    if ((width > 0) && (height > 0) && !sample_)
+    {
+        sample_ =
+            std::make_unique<samples::HelloTriangle>(m_hWnd, [](auto const& error) { global::ShowErrorInfo(error); });
+    }
     return 0L;
 }

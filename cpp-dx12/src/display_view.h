@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework.h"
-#include "samples/hello_window.h"
+#include "samples/sample_base.h"
 
 #include <memory>
 
@@ -29,5 +29,5 @@ private:
     LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
 private:
-    std::unique_ptr<samples::HelloWindow> sample_;
+    std::unique_ptr<samples::SampleBase> sample_;
 };

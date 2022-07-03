@@ -306,3 +306,6 @@ OpenCover/
 
 #CLion
 cmake-build-*/
+
+# Generated 
+generated/

@@ -1,13 +1,25 @@
-#include "hello_window.h"
+#include "hello_triangle.h"
 #include "dx12/d3dx12.hpp"
 #include "dx12/dx12_factories.hpp"
+#include "generated/shaders/basic_ps.h"
+#include "generated/shaders/basic_vs.h"
 
 namespace samples {
 
-HelloWindow::HelloWindow(HWND hwnd, ErrorCallback on_error) noexcept
+HelloTriangle::HelloTriangle(HWND hwnd, ErrorCallback on_error) noexcept
     : hwnd_{hwnd}
     , on_error_{std::move(on_error)}
 {
+    REQUIRE(::IsWindow(hwnd_));
+
+    RECT rect{};
+    ::GetClientRect(hwnd_, &rect);
+    width_ = rect.right - rect.left;
+    height_ = rect.bottom - rect.top;
+    viewport_ = CD3DX12_VIEWPORT{0.0f, 0.0f, static_cast<float>(width_), static_cast<float>(height_)};
+    scissor_rect_ = D3D12_RECT{0, 0, static_cast<LONG>(width_), static_cast<LONG>(height_)};
+    aspect_ratio_ = static_cast<float>(width_) / static_cast<float>(height_);
+
     try
     {
         LoadPipeline();
@@ -19,7 +31,7 @@ HelloWindow::HelloWindow(HWND hwnd, ErrorCallback on_error) noexcept
     }
 }
 
-HelloWindow::~HelloWindow() noexcept
+HelloTriangle::~HelloTriangle() noexcept
 {
     try
     {
@@ -35,9 +47,9 @@ HelloWindow::~HelloWindow() noexcept
     fence_event_.reset();
 }
 
-void HelloWindow::Update() noexcept {}
+void HelloTriangle::Update() noexcept {}
 
-bool HelloWindow::Render() noexcept
+bool HelloTriangle::Render() noexcept
 {
     if (error_status_)
     {
@@ -56,7 +68,7 @@ bool HelloWindow::Render() noexcept
     }
 }
 
-void HelloWindow::LoadPipeline()
+void HelloTriangle::LoadPipeline()
 {
     auto dxgi_factory = dx12::DxgiFactoryCreator().EnableDebugLayerIfOnDebug().Create();
     auto device = dx12::D3D12DeviceFactory(dxgi_factory.Get()).UseWarpAdapter(use_warp_device_).Create();
@@ -65,6 +77,7 @@ void HelloWindow::LoadPipeline()
     // Swap chain needs the queue so that it can force a flush on it.
     auto swap_chain1 = dx12::DxgiSwapChainFactory(dxgi_factory.Get(), command_queue.Get())
                            .BufferCount(FrameCount)
+                           .Size(width_, height_)
                            .CreateForHwnd(hwnd_);
 
     // This sample does not support fullscreen transitions.
@@ -103,32 +116,93 @@ void HelloWindow::LoadPipeline()
     frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
 }
 
-void HelloWindow::LoadAssets()
+void HelloTriangle::LoadAssets()
 {
+    // Create an empty root signature.
+    auto root_signature = dx12::D3D12RootSignatureFactory(device_.Get()).Create();
+
+    // Create the pipeline state, which includes compiling and loading shaders.
+    D3D12_INPUT_ELEMENT_DESC input_element_descs[] = {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
+    auto pipeline_state = dx12::D3D12PipelineStateFactory(device_.Get())
+                              .RootSignature(root_signature.Get())
+                              .InputLayout(input_element_descs)
+                              .VertexShaderBytecodeNoCopy(g_basic_vs_bytecode)
+                              .PixelShaderBytecodeNoCopy(g_basic_ps_bytecode)
+                              .Create();
+
     // Create the command list.
+    ComPtr<ID3D12GraphicsCommandList> command_list;
     HRESULT hr =
-        device_->CreateCommandList(0, CommandListType, command_allocator_.Get(), nullptr, IID_PPV_ARGS(&command_list_));
+        device_->CreateCommandList(0, CommandListType, command_allocator_.Get(), pipeline_state.Get(), IID_PPV_ARGS(&command_list));
     DX_THROW_IF_FAILED(hr, "CreateCommandList");
 
     // Command lists are created in the recording state, but there is nothing
     // to record yet. The main loop expects it to be closed, so close it now.
-    hr = command_list_->Close();
+    hr = command_list->Close();
     DX_THROW_IF_FAILED(hr, "ID3D12GraphicsCommandList::Close");
 
     // Create synchronization objects.
-    hr = device_->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
-    fence_value_ = 1;
+    ComPtr<ID3D12Fence> fence;
+    hr = device_->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 
     // Create an event handle to use for frame synchronization.
-    fence_event_.reset(::CreateEvent(nullptr, FALSE, FALSE, nullptr));
-    if (fence_event_ == nullptr)
+    std::unique_ptr<void, base::handle_delete> fence_event{::CreateEvent(nullptr, FALSE, FALSE, nullptr)};
+    if (fence_event == nullptr)
     {
         hr = HRESULT_FROM_WIN32(::GetLastError());
         DX_THROW_IF_FAILED(hr, "CreateEvent");
     }
+
+    // Create the vertex buffer.
+    // Define the geometry for a triangle.
+    Vertex triangle_vertices[] = {
+        {{0.0f, 0.25f * aspect_ratio_, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+        {{0.25f, -0.25f * aspect_ratio_, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+        {{-0.25f, -0.25f * aspect_ratio_, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}};
+
+    const UINT vertex_buffer_size = sizeof(triangle_vertices);
+
+    // Note: using upload heaps to transfer static data like vert buffers is not
+    // recommended. Every time the GPU needs it, the upload heap will be marshalled
+    // over. Please read up on Default Heap usage. An upload heap is used here for
+    // code simplicity and because there are very few verts to actually transfer.
+    ComPtr<ID3D12Resource> vertex_buffer;
+    auto heap_properties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+    auto vertex_buffer_desc = CD3DX12_RESOURCE_DESC::Buffer(vertex_buffer_size);
+    hr = device_->CreateCommittedResource(
+        &heap_properties, D3D12_HEAP_FLAG_NONE, &vertex_buffer_desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+        IID_PPV_ARGS(&vertex_buffer));
+    DX_THROW_IF_FAILED(hr, "CreateCommittedResource");
+
+    // Copy the triangle data to the vertex buffer.
+    UINT8* vertex_data_begin = nullptr;
+    CD3DX12_RANGE read_range(0, 0); // We do not intend to read from this resource on the CPU.
+    hr = vertex_buffer->Map(0, &read_range, reinterpret_cast<void**>(&vertex_data_begin));
+    DX_THROW_IF_FAILED(hr, "Map");
+    memcpy(vertex_data_begin, triangle_vertices, sizeof(triangle_vertices));
+    vertex_buffer->Unmap(0, nullptr);
+
+    root_signature_ = std::move(root_signature);
+    pipeline_state_ = std::move(pipeline_state);
+    command_list_ = std::move(command_list);
+    fence_ = std::move(fence);
+    vertex_buffer_ = std::move(vertex_buffer);
+    fence_value_ = 1;
+
+    // Initialize the vertex buffer view.
+    vertex_buffer_view_.BufferLocation = vertex_buffer_->GetGPUVirtualAddress();
+    vertex_buffer_view_.StrideInBytes = sizeof(Vertex);
+    vertex_buffer_view_.SizeInBytes = vertex_buffer_size;
+
+    // Wait for the command list to execute; we are reusing the same command
+    // list in our main loop but for now, we just want to wait for setup to
+    // complete before continuing.
+    WaitForPreviousFrame();
 }
 
-void HelloWindow::DoRedner()
+void HelloTriangle::DoRedner()
 {
     REQUIRE(!error_status_);
     // Record all the commands we need to render the scene into the command list.
@@ -145,7 +219,7 @@ void HelloWindow::DoRedner()
     WaitForPreviousFrame();
 }
 
-void HelloWindow::PopulateCommandList()
+void HelloTriangle::PopulateCommandList()
 {
     // Command list allocators can only be reset when the associated
     // command lists have finished execution on the GPU; apps should use
@@ -156,8 +230,14 @@ void HelloWindow::PopulateCommandList()
     // However, when ExecuteCommandList() is called on a particular command
     // list, that command list can then be reset at any time and must be before
     // re-recording.
+    ASSERT(pipeline_state_);
     hr = command_list_->Reset(command_allocator_.Get(), pipeline_state_.Get());
     DX_THROW_IF_FAILED(hr, "ID3D12GraphicsCommandList::Reset");
+
+    // Set necessary state.
+    command_list_->SetGraphicsRootSignature(root_signature_.Get());
+    command_list_->RSSetViewports(1, &viewport_);
+    command_list_->RSSetScissorRects(1, &scissor_rect_);
 
     // Indicate that the back buffer will be used as a render target.
     auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -166,10 +246,14 @@ void HelloWindow::PopulateCommandList()
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(
         rtv_heap_->GetCPUDescriptorHandleForHeapStart(), frame_index_, rtv_descriptor_size_);
+    command_list_->OMSetRenderTargets(1, &rtv_handle, FALSE, nullptr);
 
     // Record commands.
     const float clear_color[] = {0.0f, 0.2f, 0.4f, 1.0f};
     command_list_->ClearRenderTargetView(rtv_handle, clear_color, 0, nullptr);
+    command_list_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    command_list_->IASetVertexBuffers(0, 1, &vertex_buffer_view_);
+    command_list_->DrawInstanced(3, 1, 0, 0);
 
     // Indicate that the back buffer will now be used to present.
     barrier = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -180,7 +264,7 @@ void HelloWindow::PopulateCommandList()
     DX_THROW_IF_FAILED(hr, "ID3D12GraphicsCommandList::Close");
 }
 
-void HelloWindow::WaitForPreviousFrame()
+void HelloTriangle::WaitForPreviousFrame()
 {
     if (!command_queue_ || !fence_)
     {
@@ -209,7 +293,8 @@ void HelloWindow::WaitForPreviousFrame()
     frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
 }
 
-void HelloWindow::OnDXError(base::Error const& error) {
+void HelloTriangle::OnDXError(base::Error const& error)
+{
     error_status_ = true;
 
     if (on_error_)

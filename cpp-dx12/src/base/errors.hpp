@@ -155,19 +155,6 @@ protected:
 
 namespace internal {
 
-template <class E>
-struct enable_if_derived_from_error_or_exception
-{
-    using type = std::enable_if<
-        std::is_base_of<base::Exception, std::remove_reference_t<E>>::value ||
-            std::is_base_of<base::Error, std::remove_reference_t<E>>::value ||
-            std::is_base_of<std::ostream, std::remove_reference_t<E>>::value,
-        void>::type;
-};
-
-template <class E>
-using enable_if_derived_from_error_or_exception_t = typename enable_if_derived_from_error_or_exception<E>::type;
-
 inline void PushInfo(Error& error, base::ErrorInfo const& info) noexcept
 {
     error.PushInfo(info);
@@ -203,21 +190,19 @@ inline void PushSourceLocation(std::ostream& os, SourceLocation const& location)
 
 } // namespace base
 
-template <class E, class = base::internal::enable_if_derived_from_error_or_exception_t<E>>
+template <class E>
 inline E& operator<<(E&& e, base::ErrorInfo const& info) noexcept
 {
     base::internal::PushInfo(e, info);
     return e;
 }
 
-template <class E, class = base::internal::enable_if_derived_from_error_or_exception_t<E>>
+template <class E>
 inline E& operator<<(E&& e, base::SourceLocation const& location) noexcept
 {
     base::internal::PushSourceLocation(e, location);
     return e;
 }
-
-
 
 #define _BASE_U8_(s) u8##s
 #define _BASE_U8(s) _BASE_U8_(s)

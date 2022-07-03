@@ -21,6 +21,15 @@
     <Filter Include="base">
       <UniqueIdentifier>{7891f7d3-d771-4c67-89fd-e82aab9d5eb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{35685ed3-284c-4aad-b050-61b7fb55b8a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="generated">
+      <UniqueIdentifier>{6cc3a82c-15dd-46f1-86a3-af94e3173141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="generated\shaders">
+      <UniqueIdentifier>{1057f38b-c653-4c5d-8ba4-5e07a1cfb5cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -37,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="global.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="samples\hello_triangle.cpp">
+      <Filter>samples</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,5 +127,34 @@
     <ClInclude Include="base\unique_deleters.hpp">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="samples\hello_triangle.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="samples\sample_base.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="samples\sample_common.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="generated\shaders\basic_ps.h">
+      <Filter>generated\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="generated\shaders\basic_vs.h">
+      <Filter>generated\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\root_signature_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\pipleline_state_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shaders\basic_ps.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\basic_vs.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

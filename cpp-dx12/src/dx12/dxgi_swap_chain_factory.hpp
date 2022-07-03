@@ -31,6 +31,13 @@ public:
         return *this;
     }
 
+    DxgiSwapChainFactory& Size(uint32_t width, uint32_t height) noexcept
+    {
+        desc_.Width = width;
+        desc_.Height = height;
+        return *this;
+    }
+
     ComPtr<IDXGISwapChain1> CreateForHwnd(HWND hwnd) const 
     {
         ASSERT(::IsWindow(hwnd));

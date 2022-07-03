@@ -1,7 +1,6 @@
 #pragma once
 
 #include "base/com_error.hpp"
-#include <winerror.h>
 
 namespace dx12 {
 
