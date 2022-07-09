@@ -51,6 +51,7 @@ private:
     {
         std::wstring name;
         std::vector<TVItem> children;
+        intptr_t param = 0;
     };
 
     void InitViews();

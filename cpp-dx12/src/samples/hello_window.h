@@ -14,8 +14,6 @@ namespace samples {
 
 class HelloWindow final : public SampleBase
 {
-    using ErrorCallback = std::function<void(base::Error const&)>;
-
 public:
     explicit HelloWindow(HWND hwnd, ErrorCallback on_error = nullptr) noexcept;
     ~HelloWindow() noexcept;

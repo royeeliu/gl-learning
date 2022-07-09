@@ -1,6 +1,7 @@
 #include "main_frame.h"
 #include "config.h"
 #include "global.h"
+#include "samples/samples.h"
 #include "stdx/strings.hpp"
 #include "tree_vew_utils.h"
 
@@ -69,6 +70,12 @@ LRESULT MainFrame::OnTVSelChanged(int, LPNMHDR pnmh, BOOL&)
     tree_view.GetItemText(lptv->itemNew.hItem, text);
     UpdateTitle(text);
 
+    auto item_data = tree_view.GetItemData(lptv->itemNew.hItem);
+    if (item_data != 0)
+    {
+        display_view_.SetSampleFactory(reinterpret_cast<samples::SampleFactory*>(item_data));
+    }
+
     return 0L;
 }
 
@@ -91,7 +98,7 @@ void MainFrame::FillTreeView(const std::vector<TVItem>& items, HTREEITEM parent)
         tvi.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM;
         tvi.pszText = const_cast<LPWSTR>(item.name.c_str());
         tvi.cchTextMax = static_cast<int>(item.name.length());
-        tvi.lParam = static_cast<LPARAM>(0);
+        tvi.lParam = static_cast<LPARAM>(item.param);
 
         if (!item.children.empty())
         {
@@ -120,20 +127,19 @@ void MainFrame::UpdateTitle(const wchar_t* suffix)
 }
 
 std::vector<MainFrame::TVItem> MainFrame::CreateItemTree() {
-    TVItem item1{L"item 1"};
-    item1.children.emplace_back(L"leaf 1_1");
-    item1.children.emplace_back(L"leaf 1_2");
-    item1.children.emplace_back(L"leaf 1_3");
-    TVItem item2{L"item 2"};
-    TVItem item3{L"item 3"};
-    item3.children.emplace_back(L"leaf 3_1");
-    item3.children.emplace_back(L"item 3_2");
-    item3.children.back().children.emplace_back(L"leaf 3_2_1");
-
     std::vector<TVItem> item_tree;
-    item_tree.emplace_back(std::move(item1));
-    item_tree.emplace_back(std::move(item2));
-    item_tree.emplace_back(std::move(item3));
+    for (auto const& group : samples::SampleGroups)
+    {
+        TVItem tv_group{group.name};
+        for (size_t i = 0; i < group.count; i++)
+        {
+            auto const& item = group.items[i];
+            TVItem tv_item{item.name};
+            tv_item.param = reinterpret_cast<intptr_t>(&item.factory);
+            tv_group.children.push_back(std::move(tv_item));
+        }
+        item_tree.push_back(std::move(tv_group));
+    }
 
     return item_tree;
 }

@@ -16,8 +16,6 @@ using Microsoft::WRL::ComPtr;
 
 class HelloTriangle final : public SampleBase
 {
-    using ErrorCallback = std::function<void(base::Error const&)>;
-
 public:
     explicit HelloTriangle(HWND hwnd, ErrorCallback on_error = nullptr) noexcept;
     ~HelloTriangle() noexcept;

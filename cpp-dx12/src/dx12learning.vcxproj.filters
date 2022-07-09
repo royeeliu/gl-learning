@@ -50,6 +50,9 @@
     <ClCompile Include="samples\hello_triangle.cpp">
       <Filter>samples</Filter>
     </ClCompile>
+    <ClCompile Include="samples\sample_factory.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_frame.h">
@@ -147,6 +150,12 @@
     </ClInclude>
     <ClInclude Include="dx12\pipleline_state_factory.hpp">
       <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="samples\sample_factory.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="samples\samples.h">
+      <Filter>samples</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

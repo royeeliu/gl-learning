@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework.h"
-#include "samples/sample_base.h"
+#include "samples/sample_factory.h"
 
 #include <memory>
 
@@ -21,6 +21,8 @@ public:
     END_MSG_MAP()
     // clang-format on
 
+    void SetSampleFactory(samples::SampleFactory* factory);
+
 private:
     LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -28,6 +30,10 @@ private:
     LRESULT OnEraseBkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
+    SIZE GetClientSize();
+    void CreateNewSample();
+
 private:
+    samples::SampleFactory* sample_factory_ = nullptr;
     std::unique_ptr<samples::SampleBase> sample_;
 };
