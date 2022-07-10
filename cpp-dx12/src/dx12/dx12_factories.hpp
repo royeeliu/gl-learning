@@ -1,5 +1,6 @@
 #pragma once
 
+#include "command_list_factory.hpp"
 #include "command_queue_factory.hpp"
 #include "descriptor_heap_factory.hpp"
 #include "device_factory.hpp"

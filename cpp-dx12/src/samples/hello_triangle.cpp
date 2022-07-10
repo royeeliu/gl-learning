@@ -95,19 +95,12 @@ void HelloTriangle::LoadAssets()
                               .Create();
 
     // Create the command list.
-    ComPtr<ID3D12GraphicsCommandList> command_list;
-    HRESULT hr =
-        device->CreateCommandList(0, CommandListType, command_allocator.Get(), pipeline_state.Get(), IID_PPV_ARGS(&command_list));
-    DX_THROW_IF_FAILED(hr, "CreateCommandList");
-
-    // Command lists are created in the recording state, but there is nothing
-    // to record yet. The main loop expects it to be closed, so close it now.
-    hr = command_list->Close();
-    DX_THROW_IF_FAILED(hr, "ID3D12GraphicsCommandList::Close");
+    auto command_list =
+        dx12::D3D12CommandListFactory(device.Get(), command_allocator.Get(), pipeline_state.Get()).Create();
 
     // Create synchronization objects.
     ComPtr<ID3D12Fence> fence;
-    hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+    HRESULT hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 
     // Create an event handle to use for frame synchronization.
     std::unique_ptr<void, base::handle_delete> fence_event{::CreateEvent(nullptr, FALSE, FALSE, nullptr)};

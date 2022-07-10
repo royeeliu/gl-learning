@@ -32,9 +32,6 @@ private:
     void OnDXError(base::Error const& error);
 
 private:
-    static constexpr UINT FRAME_COUNT = SWAP_CHAIN_BUFFER_COUNT;
-    static constexpr D3D12_COMMAND_LIST_TYPE CommandListType = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
     struct Vertex
     {
         DirectX::XMFLOAT3 position;

@@ -31,9 +31,6 @@ private:
     void OnDXError(base::Error const& error);
 
 private:
-    static constexpr UINT FrameCount = 2;
-    static constexpr D3D12_COMMAND_LIST_TYPE COMMAND_LIST_TYPE = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
     const HWND hwnd_;
     const ErrorCallback on_error_;
     bool use_warp_device_ = false;

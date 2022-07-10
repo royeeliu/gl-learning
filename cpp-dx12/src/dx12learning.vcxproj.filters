@@ -163,6 +163,9 @@
     <ClInclude Include="samples\sample_devices.h">
       <Filter>samples</Filter>
     </ClInclude>
+    <ClInclude Include="dx12\command_list_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\basic_ps.hlsl">

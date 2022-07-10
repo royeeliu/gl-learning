@@ -71,19 +71,12 @@ void HelloWindow::LoadAssets()
 {
     auto& device = devices_.device;
     auto& command_allocator = devices_.command_allocator;
-
+    
     // Create the command list.
-    HRESULT hr =
-        device->CreateCommandList(0, COMMAND_LIST_TYPE, command_allocator.Get(), nullptr, IID_PPV_ARGS(&command_list_));
-    DX_THROW_IF_FAILED(hr, "CreateCommandList");
-
-    // Command lists are created in the recording state, but there is nothing
-    // to record yet. The main loop expects it to be closed, so close it now.
-    hr = command_list_->Close();
-    DX_THROW_IF_FAILED(hr, "ID3D12GraphicsCommandList::Close");
+    command_list_ = dx12::D3D12CommandListFactory(device.Get(), command_allocator.Get()).Create();
 
     // Create synchronization objects.
-    hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+    HRESULT hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
     fence_value_ = 1;
 
     // Create an event handle to use for frame synchronization.
