@@ -4,7 +4,7 @@
 #include "base/unique_deleters.hpp"
 #include "dx12/dx12_framework.hpp"
 #include "sample_base.h"
-#include "sample_common.h"
+#include "sample_devices.h"
 
 #include <array>
 #include <functional>
@@ -32,7 +32,7 @@ private:
     void OnDXError(base::Error const& error);
 
 private:
-    static constexpr UINT FrameCount = 2;
+    static constexpr UINT FRAME_COUNT = SWAP_CHAIN_BUFFER_COUNT;
     static constexpr D3D12_COMMAND_LIST_TYPE CommandListType = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
     struct Vertex
@@ -50,18 +50,12 @@ private:
     float aspect_ratio_ = 1.0f;
 
     // Pipeline objects.
-    ComPtr<IDXGISwapChain3> swap_chain_;
-    ComPtr<ID3D12Device> device_;
-    ComPtr<ID3D12CommandAllocator> command_allocator_;
-    ComPtr<ID3D12CommandQueue> command_queue_;
-    ComPtr<ID3D12DescriptorHeap> rtv_heap_;
+    SampleDevices devices_{};
     ComPtr<ID3D12RootSignature> root_signature_;
     ComPtr<ID3D12PipelineState> pipeline_state_;
     ComPtr<ID3D12GraphicsCommandList> command_list_;
-    std::array<ComPtr<ID3D12Resource>, FrameCount> render_targets_;
     D3D12_VIEWPORT viewport_{};
     D3D12_RECT scissor_rect_{};
-    UINT rtv_descriptor_size_ = 0;
 
     // App resources.
     ComPtr<ID3D12Resource> vertex_buffer_;

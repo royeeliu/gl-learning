@@ -169,6 +169,7 @@
     <ClCompile Include="main_frame.cpp" />
     <ClCompile Include="samples\hello_triangle.cpp" />
     <ClCompile Include="samples\hello_window.cpp" />
+    <ClCompile Include="samples\sample_devices.cpp" />
     <ClCompile Include="samples\sample_factory.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +201,7 @@
     <ClInclude Include="samples\hello_triangle.h" />
     <ClInclude Include="samples\hello_window.h" />
     <ClInclude Include="samples\samples.h" />
+    <ClInclude Include="samples\sample_devices.h" />
     <ClInclude Include="samples\sample_factory.h" />
     <ClInclude Include="samples\sample_base.h" />
     <ClInclude Include="samples\sample_common.h" />

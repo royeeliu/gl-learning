@@ -53,6 +53,9 @@
     <ClCompile Include="samples\sample_factory.cpp">
       <Filter>samples</Filter>
     </ClCompile>
+    <ClCompile Include="samples\sample_devices.cpp">
+      <Filter>samples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_frame.h">
@@ -155,6 +158,9 @@
       <Filter>samples</Filter>
     </ClInclude>
     <ClInclude Include="samples\samples.h">
+      <Filter>samples</Filter>
+    </ClInclude>
+    <ClInclude Include="samples\sample_devices.h">
       <Filter>samples</Filter>
     </ClInclude>
   </ItemGroup>

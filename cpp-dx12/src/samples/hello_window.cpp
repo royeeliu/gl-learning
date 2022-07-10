@@ -8,6 +8,11 @@ HelloWindow::HelloWindow(HWND hwnd, ErrorCallback on_error) noexcept
     : hwnd_{hwnd}
     , on_error_{std::move(on_error)}
 {
+    RECT rect{};
+    ::GetClientRect(hwnd_, &rect);
+    width_ = rect.right - rect.left;
+    height_ = rect.bottom - rect.top;
+
     try
     {
         LoadPipeline();
@@ -58,56 +63,18 @@ bool HelloWindow::Render() noexcept
 
 void HelloWindow::LoadPipeline()
 {
-    auto dxgi_factory = dx12::DxgiFactoryCreator().EnableDebugLayerIfOnDebug().Create();
-    auto device = dx12::D3D12DeviceFactory(dxgi_factory.Get()).UseWarpAdapter(use_warp_device_).Create();
-    auto [command_queue, command_allocator] = dx12::D3D12CommandQueueFactory(device.Get()).Create();
-
-    // Swap chain needs the queue so that it can force a flush on it.
-    auto swap_chain1 = dx12::DxgiSwapChainFactory(dxgi_factory.Get(), command_queue.Get())
-                           .BufferCount(FrameCount)
-                           .CreateForHwnd(hwnd_);
-
-    // This sample does not support fullscreen transitions.
-    HRESULT hr = dxgi_factory->MakeWindowAssociation(hwnd_, DXGI_MWA_NO_ALT_ENTER);
-    DX_THROW_IF_FAILED(hr, "MakeWindowAssociation");
-
-    ComPtr<IDXGISwapChain3> swap_chain3;
-    hr = swap_chain1.As(&swap_chain3);
-    DX_THROW_IF_FAILED(hr, "As");
-
-    // Describe and create a render target view (RTV) descriptor heap.
-    auto rtv_heap = dx12::D3D12DescriptorHeapFactory(device.Get())
-                        .Type(D3D12_DESCRIPTOR_HEAP_TYPE_RTV)
-                        .NumDescriptors(FrameCount)
-                        .Create();
-    UINT rtv_descriptor_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-    // Create frame resources.
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(rtv_heap->GetCPUDescriptorHandleForHeapStart());
-
-    // Create a RTV for each frame.
-    for (UINT n = 0; n < FrameCount; n++)
-    {
-        hr = swap_chain3->GetBuffer(n, IID_PPV_ARGS(&render_targets_[n]));
-        DX_THROW_IF_FAILED(hr, "GetBuffer");
-        device->CreateRenderTargetView(render_targets_[n].Get(), nullptr, rtv_handle);
-        rtv_handle.Offset(1, rtv_descriptor_size);
-    }
-
-    device_ = std::move(device);
-    swap_chain_ = std::move(swap_chain3);
-    command_queue_ = std::move(command_queue);
-    command_allocator_ = std::move(command_allocator);
-    rtv_heap_ = std::move(rtv_heap);
-    rtv_descriptor_size_ = rtv_descriptor_size;
-    frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+    devices_.Initialize(hwnd_, width_, height_);
+    frame_index_ = devices_.swap_chain->GetCurrentBackBufferIndex();
 }
 
 void HelloWindow::LoadAssets()
 {
+    auto& device = devices_.device;
+    auto& command_allocator = devices_.command_allocator;
+
     // Create the command list.
     HRESULT hr =
-        device_->CreateCommandList(0, CommandListType, command_allocator_.Get(), nullptr, IID_PPV_ARGS(&command_list_));
+        device->CreateCommandList(0, COMMAND_LIST_TYPE, command_allocator.Get(), nullptr, IID_PPV_ARGS(&command_list_));
     DX_THROW_IF_FAILED(hr, "CreateCommandList");
 
     // Command lists are created in the recording state, but there is nothing
@@ -116,7 +83,7 @@ void HelloWindow::LoadAssets()
     DX_THROW_IF_FAILED(hr, "ID3D12GraphicsCommandList::Close");
 
     // Create synchronization objects.
-    hr = device_->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+    hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
     fence_value_ = 1;
 
     // Create an event handle to use for frame synchronization.
@@ -131,15 +98,18 @@ void HelloWindow::LoadAssets()
 void HelloWindow::DoRedner()
 {
     REQUIRE(!error_status_);
+    auto& command_queue = devices_.command_queue;
+    auto& swap_chain = devices_.swap_chain;
+
     // Record all the commands we need to render the scene into the command list.
     PopulateCommandList();
 
     // Execute the command list.
     ID3D12CommandList* command_lists[] = {command_list_.Get()};
-    command_queue_->ExecuteCommandLists(_countof(command_lists), command_lists);
+    command_queue->ExecuteCommandLists(_countof(command_lists), command_lists);
 
     // Present the frame.
-    HRESULT hr = swap_chain_->Present(1, 0);
+    HRESULT hr = swap_chain->Present(1, 0);
     DX_THROW_IF_FAILED(hr, "Present");
 
     WaitForPreviousFrame();
@@ -147,25 +117,32 @@ void HelloWindow::DoRedner()
 
 void HelloWindow::PopulateCommandList()
 {
+    REQUIRE(!error_status_);
+    auto& device = devices_.device;
+    auto& command_allocator = devices_.command_allocator;
+    auto& render_targets = devices_.render_targets;
+    auto& rtv_heap = devices_.rtv_heap;
+    auto rtv_descriptor_size = devices_.rtv_descriptor_size;
+
     // Command list allocators can only be reset when the associated
     // command lists have finished execution on the GPU; apps should use
     // fences to determine GPU execution progress.
-    HRESULT hr = command_allocator_->Reset();
+    HRESULT hr = command_allocator->Reset();
     DX_THROW_IF_FAILED(hr, "ID3D12CommandAllocator::Reset");
 
     // However, when ExecuteCommandList() is called on a particular command
     // list, that command list can then be reset at any time and must be before
     // re-recording.
-    hr = command_list_->Reset(command_allocator_.Get(), pipeline_state_.Get());
+    hr = command_list_->Reset(command_allocator.Get(), pipeline_state_.Get());
     DX_THROW_IF_FAILED(hr, "ID3D12GraphicsCommandList::Reset");
 
     // Indicate that the back buffer will be used as a render target.
     auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        render_targets_[frame_index_].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+        render_targets[frame_index_].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
     command_list_->ResourceBarrier(1, &barrier);
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle(
-        rtv_heap_->GetCPUDescriptorHandleForHeapStart(), frame_index_, rtv_descriptor_size_);
+        rtv_heap->GetCPUDescriptorHandleForHeapStart(), frame_index_, rtv_descriptor_size);
 
     // Record commands.
     const float clear_color[] = {0.0f, 0.2f, 0.4f, 1.0f};
@@ -173,7 +150,7 @@ void HelloWindow::PopulateCommandList()
 
     // Indicate that the back buffer will now be used to present.
     barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        render_targets_[frame_index_].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+        render_targets[frame_index_].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
     command_list_->ResourceBarrier(1, &barrier);
 
     hr = command_list_->Close();
@@ -182,7 +159,10 @@ void HelloWindow::PopulateCommandList()
 
 void HelloWindow::WaitForPreviousFrame()
 {
-    if (!command_queue_ || !fence_)
+    auto& swap_chain = devices_.swap_chain;
+    auto& command_queue = devices_.command_queue;
+
+    if (!command_queue || !fence_)
     {
         return;
     }
@@ -194,7 +174,7 @@ void HelloWindow::WaitForPreviousFrame()
 
     // Signal and increment the fence value.
     const UINT64 fence = fence_value_;
-    HRESULT hr = command_queue_->Signal(fence_.Get(), fence);
+    HRESULT hr = command_queue->Signal(fence_.Get(), fence);
     DX_THROW_IF_FAILED(hr, "Signal");
     fence_value_++;
 
@@ -206,7 +186,7 @@ void HelloWindow::WaitForPreviousFrame()
         ::WaitForSingleObject(fence_event_.get(), INFINITE);
     }
 
-    frame_index_ = swap_chain_->GetCurrentBackBufferIndex();
+    frame_index_ = swap_chain->GetCurrentBackBufferIndex();
 }
 
 void HelloWindow::OnDXError(base::Error const& error) {

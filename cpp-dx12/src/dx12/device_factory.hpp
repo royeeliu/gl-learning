@@ -3,6 +3,8 @@
 #include "base/macros.hpp"
 #include "dx12_framework.hpp"
 
+#include <optional>
+
 namespace dx12 {
 
 class D3D12DeviceFactory final
