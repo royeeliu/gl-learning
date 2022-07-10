@@ -178,7 +178,7 @@
     <ClInclude Include="base\errors.hpp" />
     <ClInclude Include="base\macros.hpp" />
     <ClInclude Include="base\result.hpp" />
-    <ClInclude Include="base\unique_deleters.hpp" />
+    <ClInclude Include="base\deleters.hpp" />
     <ClInclude Include="config.h" />
     <ClInclude Include="display_view.h" />
     <ClInclude Include="dx12\command_list_factory.hpp" />
@@ -192,6 +192,7 @@
     <ClInclude Include="dx12\dxgi_swap_chain_factory.hpp" />
     <ClInclude Include="dx12\dx_error.hpp" />
     <ClInclude Include="dx12\dx12_framework.hpp" />
+    <ClInclude Include="dx12\fence_factory.hpp" />
     <ClInclude Include="dx12\pipleline_state_factory.hpp" />
     <ClInclude Include="dx12\root_signature_factory.hpp" />
     <ClInclude Include="framework.h" />

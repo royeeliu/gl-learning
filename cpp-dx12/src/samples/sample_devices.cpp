@@ -9,9 +9,7 @@ void SampleDevices::Initialize(HWND hwnd, uint32_t width, uint32_t height)
     {
         auto dxgi_factory = dx12::DxgiFactoryCreator().EnableDebugLayerIfOnDebug().Create();
         device = dx12::D3D12DeviceFactory(dxgi_factory.Get()).Create();
-        auto command_tuple = dx12::D3D12CommandQueueFactory(device.Get()).Create();
-        command_queue = std::get<0>(command_tuple);
-        command_allocator = std::get<1>(command_tuple);
+        std::tie(command_queue, command_allocator) = dx12::D3D12CommandQueueFactory(device.Get()).Create();
 
         // Swap chain needs the queue so that it can force a flush on it.
         auto swap_chain1 = dx12::DxgiSwapChainFactory(dxgi_factory.Get(), command_queue.Get())

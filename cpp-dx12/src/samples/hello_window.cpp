@@ -76,16 +76,8 @@ void HelloWindow::LoadAssets()
     command_list_ = dx12::D3D12CommandListFactory(device.Get(), command_allocator.Get()).Create();
 
     // Create synchronization objects.
-    HRESULT hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+    std::tie(fence_, fence_event_) = dx12::D3D12FenceFactory(device.Get()).Create();
     fence_value_ = 1;
-
-    // Create an event handle to use for frame synchronization.
-    fence_event_.reset(::CreateEvent(nullptr, FALSE, FALSE, nullptr));
-    if (fence_event_ == nullptr)
-    {
-        hr = HRESULT_FROM_WIN32(::GetLastError());
-        DX_THROW_IF_FAILED(hr, "CreateEvent");
-    }
 }
 
 void HelloWindow::DoRedner()

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "base/errors.hpp"
-#include "base/unique_deleters.hpp"
 #include "dx12/dx12_framework.hpp"
 #include "sample_base.h"
 #include "sample_devices.h"
@@ -59,10 +58,10 @@ private:
     D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_{};
 
     // Synchronization objects.
-    UINT frame_index_ = 0;
     ComPtr<ID3D12Fence> fence_;
+    std::shared_ptr<void> fence_event_;
     UINT64 fence_value_ = 0;
-    std::unique_ptr<void, base::handle_delete> fence_event_;
+    UINT frame_index_ = 0;
 };
 
 } // namespace samples

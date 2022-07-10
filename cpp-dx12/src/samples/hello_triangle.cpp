@@ -80,35 +80,26 @@ void HelloTriangle::LoadAssets()
     auto& command_allocator = devices_.command_allocator;
 
     // Create an empty root signature.
-    auto root_signature = dx12::D3D12RootSignatureFactory(device.Get()).Create();
+    root_signature_ = dx12::D3D12RootSignatureFactory(device.Get()).Create();
 
     // Create the pipeline state, which includes compiling and loading shaders.
     D3D12_INPUT_ELEMENT_DESC input_element_descs[] = {
         {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
         {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
 
-    auto pipeline_state = dx12::D3D12PipelineStateFactory(device.Get())
-                              .RootSignature(root_signature.Get())
-                              .InputLayout(input_element_descs)
-                              .VertexShaderBytecodeNoCopy(g_basic_vs_bytecode)
-                              .PixelShaderBytecodeNoCopy(g_basic_ps_bytecode)
-                              .Create();
+    pipeline_state_ = dx12::D3D12PipelineStateFactory(device.Get())
+                          .RootSignature(root_signature_.Get())
+                          .InputLayout(input_element_descs)
+                          .VertexShaderBytecodeNoCopy(g_basic_vs_bytecode)
+                          .PixelShaderBytecodeNoCopy(g_basic_ps_bytecode)
+                          .Create();
 
     // Create the command list.
-    auto command_list =
-        dx12::D3D12CommandListFactory(device.Get(), command_allocator.Get(), pipeline_state.Get()).Create();
+    command_list_ =
+        dx12::D3D12CommandListFactory(device.Get(), command_allocator.Get(), pipeline_state_.Get()).Create();
 
     // Create synchronization objects.
-    ComPtr<ID3D12Fence> fence;
-    HRESULT hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-
-    // Create an event handle to use for frame synchronization.
-    std::unique_ptr<void, base::handle_delete> fence_event{::CreateEvent(nullptr, FALSE, FALSE, nullptr)};
-    if (fence_event == nullptr)
-    {
-        hr = HRESULT_FROM_WIN32(::GetLastError());
-        DX_THROW_IF_FAILED(hr, "CreateEvent");
-    }
+    std::tie(fence_, fence_event_) = dx12::D3D12FenceFactory(device.Get()).Create();
 
     // Create the vertex buffer.
     // Define the geometry for a triangle.
@@ -126,7 +117,7 @@ void HelloTriangle::LoadAssets()
     ComPtr<ID3D12Resource> vertex_buffer;
     auto heap_properties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     auto vertex_buffer_desc = CD3DX12_RESOURCE_DESC::Buffer(vertex_buffer_size);
-    hr = device->CreateCommittedResource(
+    HRESULT hr = device->CreateCommittedResource(
         &heap_properties, D3D12_HEAP_FLAG_NONE, &vertex_buffer_desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
         IID_PPV_ARGS(&vertex_buffer));
     DX_THROW_IF_FAILED(hr, "CreateCommittedResource");
@@ -139,17 +130,14 @@ void HelloTriangle::LoadAssets()
     memcpy(vertex_data_begin, triangle_vertices, sizeof(triangle_vertices));
     vertex_buffer->Unmap(0, nullptr);
 
-    root_signature_ = std::move(root_signature);
-    pipeline_state_ = std::move(pipeline_state);
-    command_list_ = std::move(command_list);
-    fence_ = std::move(fence);
     vertex_buffer_ = std::move(vertex_buffer);
-    fence_value_ = 1;
 
     // Initialize the vertex buffer view.
     vertex_buffer_view_.BufferLocation = vertex_buffer_->GetGPUVirtualAddress();
     vertex_buffer_view_.StrideInBytes = sizeof(Vertex);
     vertex_buffer_view_.SizeInBytes = vertex_buffer_size;
+
+    fence_value_ = 1;
 
     // Wait for the command list to execute; we are reusing the same command
     // list in our main loop but for now, we just want to wait for setup to

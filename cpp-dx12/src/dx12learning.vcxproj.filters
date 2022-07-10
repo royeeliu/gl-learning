@@ -130,7 +130,7 @@
     <ClInclude Include="dx12\dx12_factories.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
-    <ClInclude Include="base\unique_deleters.hpp">
+    <ClInclude Include="base\deleters.hpp">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="samples\hello_triangle.h">
@@ -164,6 +164,9 @@
       <Filter>samples</Filter>
     </ClInclude>
     <ClInclude Include="dx12\command_list_factory.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\fence_factory.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
   </ItemGroup>

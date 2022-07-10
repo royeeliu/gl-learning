@@ -6,5 +6,6 @@
 #include "device_factory.hpp"
 #include "dxgi_factory_creator.hpp"
 #include "dxgi_swap_chain_factory.hpp"
+#include "fence_factory.hpp"
 #include "pipleline_state_factory.hpp"
 #include "root_signature_factory.hpp"

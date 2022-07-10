@@ -47,7 +47,7 @@ private:
     UINT frame_index_ = 0;
     ComPtr<ID3D12Fence> fence_;
     UINT64 fence_value_ = 0;
-    std::unique_ptr<void, base::handle_delete> fence_event_;
+    std::shared_ptr<void> fence_event_;
 };
 
 } // namespace samples
