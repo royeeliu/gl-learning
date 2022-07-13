@@ -1,7 +1,7 @@
 #pragma once
 
+#include "base/deleters.hpp"
 #include "base/errors.hpp"
-#include "base/unique_deleters.hpp"
 #include "dx12/dx12_framework.hpp"
 #include "sample_base.h"
 #include "sample_common.h"
@@ -44,10 +44,10 @@ private:
     ComPtr<ID3D12GraphicsCommandList> command_list_;
 
     // Synchronization objects.
-    UINT frame_index_ = 0;
     ComPtr<ID3D12Fence> fence_;
-    UINT64 fence_value_ = 0;
     std::shared_ptr<void> fence_event_;
+    uint64_t fence_value_ = 0;
+    uint32_t frame_index_ = 0;
 };
 
 } // namespace samples

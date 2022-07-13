@@ -1,6 +1,7 @@
 #include "hello_window.h"
 #include "dx12/d3dx12.hpp"
 #include "dx12/dx12_factories.hpp"
+#include "dx12/dx12_utils.hpp"
 
 namespace samples {
 
@@ -157,20 +158,7 @@ void HelloWindow::WaitForPreviousFrame()
     // sample illustrates how to use fences for efficient resource usage and to
     // maximize GPU utilization.
 
-    // Signal and increment the fence value.
-    const UINT64 fence = fence_value_;
-    HRESULT hr = command_queue->Signal(fence_.Get(), fence);
-    DX_THROW_IF_FAILED(hr, "Signal");
-    fence_value_++;
-
-    // Wait until the previous frame is finished.
-    if (fence_->GetCompletedValue() < fence)
-    {
-        hr = fence_->SetEventOnCompletion(fence, fence_event_.get());
-        DX_THROW_IF_FAILED(hr, "Signal");
-        ::WaitForSingleObject(fence_event_.get(), INFINITE);
-    }
-
+    dx12::utils::WaitForCommandExcuted(command_queue.Get(), fence_.Get(), fence_event_.get(), fence_value_++);
     frame_index_ = swap_chain->GetCurrentBackBufferIndex();
 }
 

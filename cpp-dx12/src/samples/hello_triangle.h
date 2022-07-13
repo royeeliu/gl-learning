@@ -60,8 +60,8 @@ private:
     // Synchronization objects.
     ComPtr<ID3D12Fence> fence_;
     std::shared_ptr<void> fence_event_;
-    UINT64 fence_value_ = 0;
-    UINT frame_index_ = 0;
+    uint64_t fence_value_ = 0;
+    uint32_t frame_index_ = 0;
 };
 
 } // namespace samples
