@@ -1,6 +1,8 @@
 #include "hello_triangle.h"
 #include "dx12/d3dx12.hpp"
 #include "dx12/dx12_factories.hpp"
+#include "dx12/dx12_utils.hpp"
+#include "dx12/resource_uploader.hpp"
 #include "generated/shaders/basic_ps.h"
 #include "generated/shaders/basic_vs.h"
 
@@ -78,20 +80,29 @@ void HelloTriangle::LoadAssets()
 {
     auto& device = devices_.device;
     auto& command_allocator = devices_.command_allocator;
+    auto& vs_bytecode = g_basic_vs_bytecode;
+    auto& ps_bytecode = g_basic_ps_bytecode;
+
+    D3D12_INPUT_ELEMENT_DESC const input_element_descs[] = {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
+
+    // Define the geometry for a triangle.
+    Vertex triangle_vertices[] = {
+        {{0.0f, 0.25f * aspect_ratio_, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+        {{0.25f, -0.25f * aspect_ratio_, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+        {{-0.25f, -0.25f * aspect_ratio_, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+    };
 
     // Create an empty root signature.
     root_signature_ = dx12::D3D12RootSignatureFactory(device.Get()).Create();
 
     // Create the pipeline state, which includes compiling and loading shaders.
-    D3D12_INPUT_ELEMENT_DESC input_element_descs[] = {
-        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}};
-
     pipeline_state_ = dx12::D3D12PipelineStateFactory(device.Get())
                           .RootSignature(root_signature_.Get())
                           .InputLayout(input_element_descs)
-                          .VertexShaderBytecodeNoCopy(g_basic_vs_bytecode)
-                          .PixelShaderBytecodeNoCopy(g_basic_ps_bytecode)
+                          .VertexShaderBytecodeNoCopy(vs_bytecode)
+                          .PixelShaderBytecodeNoCopy(ps_bytecode)
                           .Create();
 
     // Create the command list.
@@ -102,40 +113,8 @@ void HelloTriangle::LoadAssets()
     std::tie(fence_, fence_event_) = dx12::D3D12FenceFactory(device.Get()).Create();
 
     // Create the vertex buffer.
-    // Define the geometry for a triangle.
-    Vertex triangle_vertices[] = {
-        {{0.0f, 0.25f * aspect_ratio_, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-        {{0.25f, -0.25f * aspect_ratio_, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-        {{-0.25f, -0.25f * aspect_ratio_, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}};
-
-    const UINT vertex_buffer_size = sizeof(triangle_vertices);
-
-    // Note: using upload heaps to transfer static data like vert buffers is not
-    // recommended. Every time the GPU needs it, the upload heap will be marshalled
-    // over. Please read up on Default Heap usage. An upload heap is used here for
-    // code simplicity and because there are very few verts to actually transfer.
-    ComPtr<ID3D12Resource> vertex_buffer;
-    auto heap_properties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-    auto vertex_buffer_desc = CD3DX12_RESOURCE_DESC::Buffer(vertex_buffer_size);
-    HRESULT hr = device->CreateCommittedResource(
-        &heap_properties, D3D12_HEAP_FLAG_NONE, &vertex_buffer_desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-        IID_PPV_ARGS(&vertex_buffer));
-    DX_THROW_IF_FAILED(hr, "CreateCommittedResource");
-
-    // Copy the triangle data to the vertex buffer.
-    UINT8* vertex_data_begin = nullptr;
-    CD3DX12_RANGE read_range(0, 0); // We do not intend to read from this resource on the CPU.
-    hr = vertex_buffer->Map(0, &read_range, reinterpret_cast<void**>(&vertex_data_begin));
-    DX_THROW_IF_FAILED(hr, "Map");
-    memcpy(vertex_data_begin, triangle_vertices, sizeof(triangle_vertices));
-    vertex_buffer->Unmap(0, nullptr);
-
-    vertex_buffer_ = std::move(vertex_buffer);
-
-    // Initialize the vertex buffer view.
-    vertex_buffer_view_.BufferLocation = vertex_buffer_->GetGPUVirtualAddress();
-    vertex_buffer_view_.StrideInBytes = sizeof(Vertex);
-    vertex_buffer_view_.SizeInBytes = vertex_buffer_size;
+    vertex_buffer_ = dx12::ResourceUploader(device.Get()).Upload(triangle_vertices);
+    vertex_buffer_view_ = dx12::utils::MakeVertexBufferView(vertex_buffer_.Get(), triangle_vertices);
 
     fence_value_ = 1;
 

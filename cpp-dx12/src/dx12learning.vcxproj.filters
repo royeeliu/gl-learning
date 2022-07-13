@@ -169,6 +169,12 @@
     <ClInclude Include="dx12\fence_factory.hpp">
       <Filter>dx12</Filter>
     </ClInclude>
+    <ClInclude Include="dx12\resource_uploader.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="dx12\dx12_utils.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\basic_ps.hlsl">

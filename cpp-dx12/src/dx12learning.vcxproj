@@ -181,6 +181,8 @@
     <ClInclude Include="base\deleters.hpp" />
     <ClInclude Include="config.h" />
     <ClInclude Include="display_view.h" />
+    <ClInclude Include="dx12\dx12_utils.hpp" />
+    <ClInclude Include="dx12\resource_uploader.hpp" />
     <ClInclude Include="dx12\command_list_factory.hpp" />
     <ClInclude Include="dx12\command_queue_factory.hpp" />
     <ClInclude Include="dx12\descriptor_heap_factory.hpp" />
