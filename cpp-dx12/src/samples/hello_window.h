@@ -16,7 +16,7 @@ namespace samples {
 class HelloWindow final : public SampleBase
 {
 public:
-    explicit HelloWindow(HWND hwnd, ErrorCallback on_error = nullptr) noexcept;
+    HelloWindow(HWND hwnd, ErrorCallback on_error) noexcept;
     ~HelloWindow() noexcept;
 
     void Update() noexcept override;

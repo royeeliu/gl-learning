@@ -16,7 +16,7 @@ using Microsoft::WRL::ComPtr;
 class HelloTriangle final : public SampleBase
 {
 public:
-    explicit HelloTriangle(HWND hwnd, ErrorCallback on_error = nullptr) noexcept;
+    HelloTriangle(HWND hwnd, ErrorCallback on_error) noexcept;
     ~HelloTriangle() noexcept;
 
     void Update() noexcept override;
