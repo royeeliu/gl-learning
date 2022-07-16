@@ -26,9 +26,13 @@ LRESULT DisplayView::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 
 LRESULT DisplayView::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-    if (sample_ && sample_->Render())
+    if (sample_)
     {
-        return 0L;
+        sample_->Update();
+        if (sample_->Render())
+        {
+            return 0L;
+        }
     }
 
     CPaintDC dc(m_hWnd);

@@ -4,6 +4,7 @@
 #include "dx12/dx12_framework.hpp"
 #include "sample_base.h"
 #include "sample_devices.h"
+#include "stdx/noncopyable.hpp"
 
 #include <array>
 #include <functional>
@@ -13,7 +14,9 @@ namespace samples {
 
 using Microsoft::WRL::ComPtr;
 
-class HelloTriangle final : public SampleBase
+class HelloTriangle final
+    : public SampleBase
+    , stdx::noncopyable
 {
 public:
     HelloTriangle(HWND hwnd, ErrorCallback on_error) noexcept;

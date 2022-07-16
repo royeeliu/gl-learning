@@ -167,6 +167,7 @@
     <ClCompile Include="global.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_frame.cpp" />
+    <ClCompile Include="samples\hello_constant_buffer.cpp" />
     <ClCompile Include="samples\hello_triangle.cpp" />
     <ClCompile Include="samples\hello_window.cpp" />
     <ClCompile Include="samples\sample_devices.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="generated\shaders\basic_vs.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="main_frame.h" />
+    <ClInclude Include="samples\hello_constant_buffer.h" />
     <ClInclude Include="samples\hello_triangle.h" />
     <ClInclude Include="samples\hello_window.h" />
     <ClInclude Include="samples\samples.h" />
@@ -209,6 +211,7 @@
     <ClInclude Include="samples\sample_factory.h" />
     <ClInclude Include="samples\sample_base.h" />
     <ClInclude Include="samples\sample_common.h" />
+    <ClInclude Include="stdx\noncopyable.hpp" />
     <ClInclude Include="stdx\strings.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tree_vew_utils.h" />
@@ -258,6 +261,31 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
     </FxCompile>
+    <FxCompile Include="shaders\moving_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">generated/shaders/moving_vs.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">generated/shaders/moving_vs.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated/shaders/moving_vs.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated/shaders/moving_vs.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">g_moving_vs_bytecode</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">g_moving_vs_bytecode</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_moving_vs_bytecode</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_moving_vs_bytecode</VariableName>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\common.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -30,6 +30,7 @@ namespace factories {
 
 extern SampleFactory& hello_window_factory;
 extern SampleFactory& hello_triangle_factory;
+extern SampleFactory& hello_constant_buffer_factory;
 
 } // namespace factories
 

@@ -20,7 +20,8 @@ struct SampleGroupItem
 // clang-format off
 static SampleItem const HelloSamples[] = {
     {L"Hello Window", factories::hello_window_factory}, 
-    {L"Hello Triangle", factories::hello_triangle_factory}
+    {L"Hello Triangle", factories::hello_triangle_factory},
+    {L"Hello Constant Buffer", factories::hello_constant_buffer_factory}
 };
 
 static SampleGroupItem SampleGroups[] = {

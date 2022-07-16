@@ -28,6 +28,12 @@ public:
         return *this;
     }
 
+    D3D12DescriptorHeapFactory& Flags(D3D12_DESCRIPTOR_HEAP_FLAGS flags) noexcept
+    {
+        desc_.Flags = flags;
+        return *this;
+    }
+
     ComPtr<ID3D12DescriptorHeap> Create() const
     {
         ComPtr<ID3D12DescriptorHeap> heap;
