@@ -95,7 +95,9 @@ void HelloTriangle::LoadAssets()
     };
 
     // Create an empty root signature.
-    root_signature_ = dx12::D3D12RootSignatureFactory(device.Get()).Create();
+    root_signature_ = dx12::D3D12RootSignatureFactory(device.Get())
+                          .SetFlags(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT)
+                          .Create();
 
     // Create the pipeline state, which includes compiling and loading shaders.
     pipeline_state_ = dx12::D3D12PipelineStateFactory(device.Get())

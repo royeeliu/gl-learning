@@ -28,7 +28,42 @@ ErrorInfo MakeErrorInfo(char8_t const* name, T content) noexcept
 {
     try
     {
-        return {std::u8string{name ? name : u8"", stdx::locale_to_u8(std::to_string(content))}};
+        return {std::u8string{name ? name : u8""}, stdx::locale_to_u8(std::to_string(content))};
+    }
+    catch (std::exception&)
+    {
+        return ErrorInfo{};
+    }
+}
+
+inline ErrorInfo MakeErrorInfo(char8_t const* name, std::string content) {
+    try
+    {
+        return {std::u8string{name ? name : u8""}, stdx::locale_to_u8(content)};
+    }
+    catch (std::exception&)
+    {
+        return ErrorInfo{};
+    }
+}
+
+inline ErrorInfo MakeErrorInfo(char8_t const* name, char const* content)
+{
+    try
+    {
+        return {std::u8string{name ? name : u8""}, stdx::locale_to_u8(content)};
+    }
+    catch (std::exception&)
+    {
+        return ErrorInfo{};
+    }
+}
+
+inline ErrorInfo MakeErrorInfo(char8_t const* name, char* content)
+{
+    try
+    {
+        return {std::u8string{name ? name : u8""}, stdx::locale_to_u8(content)};
     }
     catch (std::exception&)
     {
