@@ -131,6 +131,9 @@ void HelloConstantBuffer::LoadAssets()
         CD3DX12_DESCRIPTOR_RANGE1 ranges[1]{};
         CD3DX12_ROOT_PARAMETER1 root_parameters[1]{};
 
+        // D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC
+        // Both descriptors and data are static.  This maximizes the potential for driver optimization.
+        // https://docs.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_descriptor_range_flags
         ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
         root_parameters[0].InitAsDescriptorTable(1, &ranges[0], D3D12_SHADER_VISIBILITY_VERTEX);
 
