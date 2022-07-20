@@ -198,6 +198,7 @@
     <ClInclude Include="dx12\fence_factory.hpp" />
     <ClInclude Include="dx12\pipleline_state_factory.hpp" />
     <ClInclude Include="dx12\root_signature_factory.hpp" />
+    <ClInclude Include="dx12\upload_buffer.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="generated\shaders\basic_ps.h" />
     <ClInclude Include="generated\shaders\basic_vs.h" />

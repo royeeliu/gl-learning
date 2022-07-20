@@ -63,7 +63,7 @@ void HelloConstantBuffer::Update() noexcept {
     {
         constant_buffer_data_.offset.x = -offsetBounds;
     }
-    memcpy(cbv_data_begin_, &constant_buffer_data_, sizeof(constant_buffer_data_));
+    constant_buffer_->CopyData(0, constant_buffer_data_);
 }
 
 bool HelloConstantBuffer::Render() noexcept
@@ -176,29 +176,14 @@ void HelloConstantBuffer::LoadAssets()
     vertex_buffer_view_ = dx12::utils::MakeVertexBufferView(vertex_buffer_.Get(), triangle_vertices);
 
     // Create the constant buffer.
-    {
-        const UINT constantBufferSize = sizeof(SceneConstantBuffer); // CB size is required to be 256-byte aligned.
+    constant_buffer_ = std::make_unique<ConstantUploadBuffer>(device.Get(), 1);
+    constant_buffer_->CopyData(0, constant_buffer_data_);
 
-        CD3DX12_HEAP_PROPERTIES heap_properties(D3D12_HEAP_TYPE_UPLOAD);
-        auto desc = CD3DX12_RESOURCE_DESC::Buffer(constantBufferSize);
-        HRESULT hr = device->CreateCommittedResource(
-            &heap_properties, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-            IID_PPV_ARGS(&constant_buffer_));
-        DX_THROW_IF_FAILED(hr, "CreateCommittedResource");
-
-        // Describe and create a constant buffer view.
-        D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-        cbvDesc.BufferLocation = constant_buffer_->GetGPUVirtualAddress();
-        cbvDesc.SizeInBytes = constantBufferSize;
-        device->CreateConstantBufferView(&cbvDesc, cbv_heap_->GetCPUDescriptorHandleForHeapStart());
-
-        // Map and initialize the constant buffer. We don't unmap this until the
-        // app closes. Keeping things mapped for the lifetime of the resource is okay.
-        CD3DX12_RANGE readRange(0, 0); // We do not intend to read from this resource on the CPU.
-        hr = constant_buffer_->Map(0, &readRange, reinterpret_cast<void**>(&cbv_data_begin_));
-        DX_THROW_IF_FAILED(hr, "Map");
-        memcpy(cbv_data_begin_, &constant_buffer_data_, sizeof(constant_buffer_data_));
-    }
+    // Describe and create a constant buffer view.
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbv_desc = {};
+    cbv_desc.BufferLocation = constant_buffer_->Resource()->GetGPUVirtualAddress();
+    cbv_desc.SizeInBytes = constant_buffer_->ElementByteSize();
+    device->CreateConstantBufferView(&cbv_desc, cbv_heap_->GetCPUDescriptorHandleForHeapStart());
 
     fence_value_ = 1;
 

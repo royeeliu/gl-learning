@@ -184,6 +184,9 @@
     <ClInclude Include="stdx\noncopyable.hpp">
       <Filter>stdx</Filter>
     </ClInclude>
+    <ClInclude Include="dx12\upload_buffer.hpp">
+      <Filter>dx12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\basic_ps.hlsl">

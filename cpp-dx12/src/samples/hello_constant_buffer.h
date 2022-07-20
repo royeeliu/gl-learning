@@ -2,6 +2,7 @@
 
 #include "base/errors.hpp"
 #include "dx12/dx12_framework.hpp"
+#include "dx12/upload_buffer.hpp"
 #include "sample_base.h"
 #include "sample_devices.h"
 #include "stdx/noncopyable.hpp"
@@ -43,9 +44,8 @@ private:
     struct SceneConstantBuffer
     {
         DirectX::XMFLOAT4 offset;
-        float padding[60]; // Padding so the constant buffer is 256-byte aligned.
     };
-    static_assert((sizeof(SceneConstantBuffer) % 256) == 0, "Constant Buffer size must be 256-byte aligned");
+    using ConstantUploadBuffer = dx12::UploadBuffer<SceneConstantBuffer, dx12::IsConstantBuffer::value>;
 
     const HWND hwnd_;
     const ErrorCallback on_error_;
@@ -66,10 +66,9 @@ private:
 
     // App resources.
     ComPtr<ID3D12Resource> vertex_buffer_;
-    ComPtr<ID3D12Resource> constant_buffer_;
     D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view_{};
-    SceneConstantBuffer constant_buffer_data_;
-    uint8_t* cbv_data_begin_ = nullptr;
+    std::unique_ptr<ConstantUploadBuffer> constant_buffer_;
+    SceneConstantBuffer constant_buffer_data_{};
 
     // Synchronization objects.
     ComPtr<ID3D12Fence> fence_;
