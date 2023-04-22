@@ -22,7 +22,6 @@ struct SourceLocation
     char8_t const* function = nullptr;
 };
 
-
 template <class T>
 ErrorInfo MakeErrorInfo(char8_t const* name, T content) noexcept
 {
@@ -36,7 +35,8 @@ ErrorInfo MakeErrorInfo(char8_t const* name, T content) noexcept
     }
 }
 
-inline ErrorInfo MakeErrorInfo(char8_t const* name, std::string content) {
+inline ErrorInfo MakeErrorInfo(char8_t const* name, std::string content)
+{
     try
     {
         return {std::u8string{name ? name : u8""}, stdx::locale_to_u8(content)};
@@ -90,7 +90,8 @@ public:
     Error(Error&&) noexcept = default;
     Error& operator=(Error&&) noexcept = default;
 
-    std::error_code const& Code() const noexcept {
+    std::error_code const& Code() const noexcept
+    {
         return code_;
     }
 
@@ -116,7 +117,7 @@ public:
         {
             info.append(prefix).append(item.name).append(u8": ").append(suffix);
         }
-        for (auto const& item: source_locations_)
+        for (auto const& item : source_locations_)
         {
             info.append(prefix)
                 .append(item.file ? item.file : u8"unknown file")
@@ -150,7 +151,7 @@ public:
     }
 
 private:
-    static std::u8string MakeMessage(char8_t const* message) noexcept 
+    static std::u8string MakeMessage(char8_t const* message) noexcept
     {
         try
         {
