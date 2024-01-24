@@ -204,14 +204,11 @@ mod sample {
             if let Some(resources) = &mut self.resources {
                 Self::populate_command_list(resources).unwrap();
 
-                // Execute the command list.
                 let command_list = Some(resources.command_list.cast().unwrap());
                 unsafe {
                     resources.command_queue.ExecuteCommandLists(&[command_list]);
-                };
-
-                // Present the frame.
-                unsafe { resources.swap_chain.Present(1, 0) }.ok().unwrap();
+                    resources.swap_chain.Present(1, 0).ok().unwrap();
+                }
 
                 Self::wait_for_previous_frame(resources);
             }
@@ -219,41 +216,28 @@ mod sample {
 
         fn populate_command_list(resources: &Resources) -> Result<()> {
             let command_list = &resources.command_list;
-
             // Indicate that the back buffer will be used as a render target.
             let barrier = Self::transition_barrier(
                 &resources.render_targets[resources.frame_index as usize],
                 D3D12_RESOURCE_STATE_PRESENT,
                 D3D12_RESOURCE_STATE_RENDER_TARGET,
             );
-
-            unsafe {
-                // Command list allocators can only be reset when the associated
-                // command lists have finished execution on the GPU; apps should use
-                // fences to determine GPU execution progress.
-                resources.command_allocator.Reset()?;
-
-                // However, when ExecuteCommandList() is called on a particular
-                // command list, that command list can then be reset at any time and
-                // must be before re-recording.
-                command_list.Reset(&resources.command_allocator, None)?;
-
-                // Set necessary state.
-                command_list.RSSetViewports(&[resources.viewport]);
-                command_list.RSSetScissorRects(&[resources.scissor_rect]);
-            }
-
-            unsafe { command_list.ResourceBarrier(&[barrier]) };
-
             let rtv_handle = D3D12_CPU_DESCRIPTOR_HANDLE {
                 ptr: unsafe { resources.rtv_heap.GetCPUDescriptorHandleForHeapStart() }.ptr
                     + resources.frame_index as usize * resources.rtv_descriptor_size,
             };
 
-            unsafe { command_list.OMSetRenderTargets(1, Some(&rtv_handle), false, None) };
-
-            // Record commands.
             unsafe {
+                resources.command_allocator.Reset()?;
+                command_list.Reset(&resources.command_allocator, None)?;
+
+                // Set necessary state.
+                command_list.RSSetViewports(&[resources.viewport]);
+                command_list.RSSetScissorRects(&[resources.scissor_rect]);
+                command_list.ResourceBarrier(&[barrier]);
+                command_list.OMSetRenderTargets(1, Some(&rtv_handle), false, None);
+
+                // Record commands.
                 command_list.ClearRenderTargetView(
                     rtv_handle,
                     &[0.0_f32, 0.2_f32, 0.4_f32, 1.0_f32],
@@ -268,9 +252,8 @@ mod sample {
                     D3D12_RESOURCE_STATE_RENDER_TARGET,
                     D3D12_RESOURCE_STATE_PRESENT,
                 )]);
+                command_list.Close()?
             }
-            unsafe { command_list.Close() }?;
-
             Ok(())
         }
 
