@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 
 project(LearningOpenGLwithGLFW)
 set(CMAKE_CXX_STANDARD 20)
@@ -31,6 +31,8 @@ add_executable(texture-face texture_face.cc)
 if (APPLE)
   set(LIB_GLFW glfw3)
 elseif (LINUX)
+  set(LIB_GLFW glfw)
+else()
   set(LIB_GLFW glfw)
 endif()
 

@@ -2,7 +2,6 @@
 #include "gl_include.h"
 
 #include <cassert>
-#include <format>
 #include <iostream>
 
 #define ASSERT assert
