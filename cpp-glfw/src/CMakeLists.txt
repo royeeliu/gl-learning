@@ -5,10 +5,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(./glad/include)
 include_directories(../third-party/glm)
-include_directories(/usr/local/include)
 
-link_directories(/usr/local/lib)
-link_libraries("-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo")
+if(APPLE)
+  include_directories(/usr/local/include)
+  link_directories(/usr/local/lib)
+  link_libraries("-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo")
+elseif (LINUX)
+  include_directories(/usr/local/include)
+  link_directories(/usr/local/lib)
+endif()
 
 # 添加子目录
 add_subdirectory(glad)
@@ -23,13 +28,19 @@ add_executable(texture-hello texture_hello.cc)
 add_executable(texture-combined texture_combined.cc)
 add_executable(texture-face texture_face.cc)
 
-target_link_libraries(triangle-hello glfw3 glad utils)
-target_link_libraries(triangle-moving glfw3 glad utils)
-target_link_libraries(triangle-matrix glfw3 glad utils)
-target_link_libraries(triangle-color glfw3 glad utils)
-target_link_libraries(texture-hello glfw3 glad utils stb_image)
-target_link_libraries(texture-combined glfw3 glad utils stb_image)
-target_link_libraries(texture-face glfw3 glad utils stb_image)
+if (APPLE)
+  set(LIB_GLFW glfw3)
+elseif (LINUX)
+  set(LIB_GLFW glfw)
+endif()
+
+target_link_libraries(triangle-hello ${LIB_GLFW} glad utils)
+target_link_libraries(triangle-moving ${LIB_GLFW} glad utils)
+target_link_libraries(triangle-matrix ${LIB_GLFW} glad utils)
+target_link_libraries(triangle-color ${LIB_GLFW} glad utils)
+target_link_libraries(texture-hello ${LIB_GLFW} glad utils stb_image)
+target_link_libraries(texture-combined ${LIB_GLFW} glad utils stb_image)
+target_link_libraries(texture-face ${LIB_GLFW} glad utils stb_image)
 
 # 拷贝 assets 文件夹
 add_custom_target(copy_assets ALL  
